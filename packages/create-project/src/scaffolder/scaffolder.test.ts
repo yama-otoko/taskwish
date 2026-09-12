@@ -108,6 +108,13 @@ describe("Scaffolder.createProject", () => {
       ["OptionsAnalyst"],
       "src/options-analyst/options-analyst.test.ts",
     ],
+    [
+      "open-banking",
+      "src/open-banking/start-bank-connection.ts",
+      "startBankConnection",
+      ["OpenBanking"],
+      "src/open-banking/open-banking.test.ts",
+    ],
   ] as const)(
     "creates the %s TypeScript template",
     async (template, actionPath, actorSource, actorNames, testPath) => {
@@ -159,7 +166,8 @@ describe("Scaffolder.createProject", () => {
         template === "software-factory" ||
         template === "document-extractor" ||
         template === "freight-operator" ||
-        template === "options-analyst"
+        template === "options-analyst" ||
+        template === "open-banking"
           ? "bun test src"
           : "bun test"
       );
@@ -311,6 +319,28 @@ describe("Scaffolder.createProject", () => {
         expect(formulaSource).toContain('"greeksFormula"');
         expect(optionsSource).toContain("this.greeksFormula.solve(");
         expect(optionsSource).toContain("this.agent.generate(");
+      }
+      if (template === "open-banking") {
+        const listBanksSource = await readFile(
+          join(destination, "src/open-banking/list-banks.ts"),
+          "utf8"
+        );
+        const startConnectionSource = await readFile(
+          join(destination, "src/open-banking/start-bank-connection.ts"),
+          "utf8"
+        );
+        const syncConnectionSource = await readFile(
+          join(destination, "src/open-banking/sync-bank-connection.ts"),
+          "utf8"
+        );
+        expect(listBanksSource).toContain('.on("Command", "listBanks")');
+        expect(startConnectionSource).toContain(
+          '.on("Command", "startBankConnection")'
+        );
+        expect(syncConnectionSource).toContain(
+          '.on("Command", "syncBankConnection")'
+        );
+        expect(startConnectionSource).not.toContain("secretId");
       }
       if (template === "software-factory") {
         const codingSource = await readFile(

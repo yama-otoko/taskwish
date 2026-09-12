@@ -17,6 +17,7 @@ export const TEMPLATE_NAMES = [
   "document-extractor",
   "freight-operator",
   "options-analyst",
+  "open-banking",
 ] as const;
 
 export type TemplateName = (typeof TEMPLATE_NAMES)[number];
@@ -90,7 +91,8 @@ export const { createProject } = actor()
         template !== "software-factory" &&
         template !== "document-extractor" &&
         template !== "freight-operator" &&
-        template !== "options-analyst"
+        template !== "options-analyst" &&
+        template !== "open-banking"
       ) {
         throw new Error(
           `Unknown template "${template}". Choose ${TEMPLATE_NAMES.join(", ")}.`,
@@ -327,6 +329,12 @@ export const { createProject } = actor()
               label: "Options analyst",
               description:
                 "Symbolically verified option Greeks explained by OpenAI",
+            },
+            {
+              value: "open-banking",
+              label: "Open banking",
+              description:
+                "European bank consent, accounts, balances, and transactions",
             },
           ],
         },

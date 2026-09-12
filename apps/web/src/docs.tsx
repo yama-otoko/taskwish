@@ -12,7 +12,7 @@ const pages: DocPage[] = [
     content: <>
       <h2>Requirements</h2><p>TaskWish uses <a href="https://bun.sh" target="_blank" rel="noreferrer">Bun</a> by default and also supports Node.js 20+. Use <code>bunx</code> and <code>bun</code>, <code>npx</code> and <code>npm run start:node</code>, or the platform installer.</p>
       <CodeBlock title="Terminal" language="sh" code={`${createCommand}\ncd my-taskwish-app\nbun start`} />
-      <h2>Choose a starter</h2><p>The interactive installer offers seven templates: <code>empty</code>, <code>todo</code>, <code>agent-loops</code>, <code>agent-graphs</code>, <code>software-factory</code>, <code>document-extractor</code>, and <code>freight-operator</code>.</p>
+      <h2>Choose a starter</h2><p>The interactive installer offers nine templates: <code>empty</code>, <code>todo</code>, <code>agent-loops</code>, <code>agent-graphs</code>, <code>software-factory</code>, <code>document-extractor</code>, <code>freight-operator</code>, <code>options-analyst</code>, and <code>open-banking</code>.</p>
       <CodeBlock title="Terminal" language="sh" code="bunx @taskwish/create-project my-app --template todo" />
       <h2>Your project</h2><p><code>taskwish.ts</code> starts the server. Each actor lives in its own folder with an actor definition, one file per action, an index that exports the service, and a colocated test.</p>
       <CodeBlock title="taskwish.ts" code={`import { Console } from "@taskwish/console";\nimport { Server } from "@taskwish/server";\nimport { Greeter } from "./src/greeter";\n\nawait Server("TaskWish Greeter", {\n  apps: [Console()],\n  workspace: [Greeter],\n});`} />
