@@ -58,6 +58,7 @@ The generated service prints its local Console URL and API key at startup.
 | [`document-extractor`](packages/create-project/templates/document-extractor) | Document uploads and text extraction with the Documents actor |
 | [`freight-operator`](packages/create-project/templates/freight-operator) | Email/documents → Anydoc and OpenAI extraction → validation → human approval → McLeod PowerBroker order |
 | [`options-analyst`](packages/create-project/templates/options-analyst) | Black–Scholes Greeks → symbolic verification → OpenAI risk memo |
+| [`equipment-diagnostician`](packages/create-project/templates/equipment-diagnostician) | Maintenance report → neural observation extraction → symbolic fault diagnosis → grounded explanation |
 | [`open-banking`](packages/create-project/templates/open-banking) | PSD2 bank selection → user consent → accounts, balances, and transactions |
 
 Choose a starter directly with `--template`:

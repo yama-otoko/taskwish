@@ -41,6 +41,7 @@ export const { actor } = Actor("OptionsAnalyst")
         d1 ==
         (logMoneyness + (r + (sigma * sigma) / 2) * tau) /
           (sigma * sqrtTau),
+          
       ({ d1, d2, sigma, sqrtTau }) => d2 == d1 - sigma * sqrtTau,
     ),
 
@@ -48,11 +49,15 @@ export const { actor } = Actor("OptionsAnalyst")
       "greeksFormula",
       ({ price, S, cdfD1, K, discount, cdfD2 }) =>
         price == S * cdfD1 - K * discount * cdfD2,
+
       ({ delta, cdfD1 }) => delta == cdfD1,
+
       ({ gamma, densityD1, S, sigma, sqrtTau }) =>
         gamma == densityD1 / (S * sigma * sqrtTau),
+
       ({ vega, S, densityD1, sqrtTau }) =>
         vega == S * densityD1 * sqrtTau,
+
       ({
         theta,
         S,
@@ -67,6 +72,7 @@ export const { actor } = Actor("OptionsAnalyst")
         theta ==
         -(S * densityD1 * sigma) / (2 * sqrtTau) -
           r * K * discount * cdfD2,
+
       ({ rho, K, tau, discount, cdfD2 }) =>
         rho == K * tau * discount * cdfD2,
     ),
