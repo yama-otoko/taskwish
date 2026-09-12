@@ -1,0 +1,26 @@
+{
+  "name": "taskwish-project",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "../../../*"
+  ],
+  "scripts": {
+    "start": "bun taskwish.ts",
+    "start:node": "tsx taskwish.ts",
+    "check": "tsc --noEmit",
+    "test": "bun test src"
+  },
+  "dependencies": {
+    "@taskwish/console": "workspace:*",
+    "@taskwish/server": "workspace:*",
+    "taskwish": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.12",
+    "@types/node": "^22.15.21",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.2"
+  }
+}
