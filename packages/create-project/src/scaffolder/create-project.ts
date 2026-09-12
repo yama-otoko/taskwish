@@ -17,6 +17,7 @@ export const TEMPLATE_NAMES = [
   "document-extractor",
   "freight-operator",
   "options-analyst",
+  "equipment-diagnostician",
   "open-banking",
 ] as const;
 
@@ -92,6 +93,7 @@ export const { createProject } = actor()
         template !== "document-extractor" &&
         template !== "freight-operator" &&
         template !== "options-analyst" &&
+        template !== "equipment-diagnostician" &&
         template !== "open-banking"
       ) {
         throw new Error(
@@ -329,6 +331,12 @@ export const { createProject } = actor()
               label: "Options analyst",
               description:
                 "Symbolically verified option Greeks explained by OpenAI",
+            },
+            {
+              value: "equipment-diagnostician",
+              label: "Equipment diagnostician",
+              description:
+                "Neural observation extraction with symbolic fault diagnosis",
             },
             {
               value: "open-banking",

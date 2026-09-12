@@ -109,6 +109,13 @@ describe("Scaffolder.createProject", () => {
       "src/options-analyst/options-analyst.test.ts",
     ],
     [
+      "equipment-diagnostician",
+      "src/equipment-diagnostician/diagnose-report.ts",
+      "diagnoseReport",
+      ["EquipmentDiagnostician"],
+      "src/equipment-diagnostician/equipment-diagnostician.test.ts",
+    ],
+    [
       "open-banking",
       "src/open-banking/start-bank-connection.ts",
       "startBankConnection",
@@ -167,6 +174,7 @@ describe("Scaffolder.createProject", () => {
         template === "document-extractor" ||
         template === "freight-operator" ||
         template === "options-analyst" ||
+        template === "equipment-diagnostician" ||
         template === "open-banking"
           ? "bun test src"
           : "bun test"
@@ -319,6 +327,29 @@ describe("Scaffolder.createProject", () => {
         expect(formulaSource).toContain('"greeksFormula"');
         expect(optionsSource).toContain("this.greeksFormula.solve(");
         expect(optionsSource).toContain("this.agent.generate(");
+      }
+      if (template === "equipment-diagnostician") {
+        const diagnosisSource = await readFile(
+          join(
+            destination,
+            "src/equipment-diagnostician/diagnose-report.ts"
+          ),
+          "utf8"
+        );
+        const actorSource = await readFile(
+          join(
+            destination,
+            "src/equipment-diagnostician/equipment-diagnostician.ts"
+          ),
+          "utf8"
+        );
+        expect(packageJson.dependencies["@taskwish/symbolic"]).toBe(
+          `^${templateVersions["@taskwish/symbolic"]}`
+        );
+        expect(actorSource).toContain('"diagnosisRules"');
+        expect(diagnosisSource).toContain("this.perceptionAgent.generate(");
+        expect(diagnosisSource).toContain("this.diagnosisRules.solve(");
+        expect(diagnosisSource).toContain("this.explanationAgent.generate(");
       }
       if (template === "open-banking") {
         const listBanksSource = await readFile(
