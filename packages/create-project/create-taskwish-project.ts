@@ -18,6 +18,7 @@ Terminal.elicit(Scaffolder.createProject, {
     "bunx @taskwish/create-project my-options-app --template options-analyst",
     "bunx @taskwish/create-project my-diagnostics-app --template equipment-diagnostician",
     "bunx @taskwish/create-project my-bank-app --template open-banking",
+    "bunx @taskwish/create-project my-revenue-app --template revenue-monitor",
     "bunx @taskwish/create-project my-app --yes",
   ],
   input: {

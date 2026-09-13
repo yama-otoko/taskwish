@@ -4,6 +4,7 @@ export type ServiceModule = Record<string, unknown>;
 export type ServiceReference = ServiceModule | Promise<ServiceModule>;
 
 export type Action = ((...args: unknown[]) => unknown) & {
+  run?: (...args: unknown[]) => unknown;
   stream?: (...args: unknown[]) => AsyncGenerator<unknown, unknown, unknown>;
   [TW.Name]?: string;
   [TW.Meta]?: unknown;

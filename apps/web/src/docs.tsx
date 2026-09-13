@@ -12,7 +12,7 @@ const pages: DocPage[] = [
     content: <>
       <h2>Requirements</h2><p>TaskWish uses <a href="https://bun.sh" target="_blank" rel="noreferrer">Bun</a> by default and also supports Node.js 20+. Use <code>bunx</code> and <code>bun</code>, <code>npx</code> and <code>npm run start:node</code>, or the platform installer.</p>
       <CodeBlock title="Terminal" language="sh" code={`${createCommand}\ncd my-taskwish-app\nbun start`} />
-      <h2>Choose a starter</h2><p>The interactive installer offers ten templates: <code>empty</code>, <code>todo</code>, <code>agent-loops</code>, <code>agent-graphs</code>, <code>software-factory</code>, <code>document-extractor</code>, <code>freight-operator</code>, <code>options-analyst</code>, <code>equipment-diagnostician</code>, and <code>open-banking</code>.</p>
+      <h2>Choose a starter</h2><p>The interactive installer offers eleven templates, including <code>revenue-monitor</code> for scheduled symbolic checks backed by Open Banking and Slack.</p>
       <CodeBlock title="Terminal" language="sh" code="bunx @taskwish/create-project my-app --template todo" />
       <h2>Your project</h2><p><code>taskwish.ts</code> starts the server. Each actor lives in its own folder with an actor definition, one file per action, an index that exports the service, and a colocated test.</p>
       <CodeBlock title="taskwish.ts" code={`import { Console } from "@taskwish/console";\nimport { Server } from "@taskwish/server";\nimport { Greeter } from "./src/greeter";\n\nawait Server("TaskWish Greeter", {\n  apps: [Console()],\n  workspace: [Greeter],\n});`} />
@@ -26,6 +26,8 @@ const pages: DocPage[] = [
       <CodeBlock title="src/greeter/greeter.ts" code={`import { Actor } from "taskwish";\n\nexport const { actor } = Actor("Greeter");`} />
       <h2>Command actions</h2><p>Use <code>.on("Command", name)</code> for public actions. Inputs are runtime-validated and inferred inside every step. Metadata powers labels, descriptions, examples, and controls in Console.</p>
       <CodeBlock title="src/greeter/greet.ts" code={`import { Step } from "taskwish";\nimport { actor } from "./greeter";\n\nexport const { greet } = actor()\n  .on("Command", "greet")\n\n  .input({ name: "string" })\n\n  .run(\n    Step("createGreeting", function () {\n      return \`Hello, \${this.input.name.trim()}!\`;\n    }),\n  )\n\n  .meta({\n    description: "Greet a person by name",\n    input: { name: { example: "Ada" } },\n  });`} />
+      <h2>Scheduled actions</h2><p>Use a <code>Schedule</code> action for recurring work. It exports as <code>onSchedule</code> by default; add <code>command</code> when the job needs a domain-specific name. The server validates the expression, starts the job, prevents overlapping runs by default, and stops it during shutdown.</p>
+      <CodeBlock code={`export const { revenueMonitor } = actor()\n  .on("Schedule", "0 9 1 * *")\n  .command("revenueMonitor")\n\n  .run(\n    Step("refreshRevenue", function () {\n      return refreshFor(this.input.at);\n    }),\n  );`} />
       <h2>Service export</h2><CodeBlock title="src/greeter/index.ts" code={`import { actor } from "./greeter";\nimport { greet } from "./greet";\n\nexport const { Greeter } = actor().service({ greet });`} />
     </>,
   },
@@ -98,7 +100,7 @@ function Callout({ children }: { children: React.ReactNode }) { return <div clas
 function headingsFor(slug: string) {
   return ({
     "getting-started": ["Requirements", "Choose a starter", "Your project"],
-    actors: ["Actor", "Command actions", "Service export"],
+    actors: ["Actor", "Command actions", "Scheduled actions", "Service export"],
     steps: ["Named steps", "Dependencies", "Control flow"],
     "state-and-events": ["Scoped state", "Signal an event"],
     agents: ["Configure a provider", "Agent steps", "Start from a working architecture"],

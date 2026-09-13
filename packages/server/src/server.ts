@@ -9,6 +9,7 @@ import { createNodeRegistry } from "./registry";
 import { json } from "./response";
 import { normalizePrefix } from "./routes";
 import { createFetchHandlerFromRoutes, createRoutes } from "./routes";
+import { startScheduledActions } from "./schedule";
 import type {
   NodeAppReadyContext,
   NodeConfig,
@@ -284,6 +285,19 @@ export async function Server(
         }) as unknown as RuntimeServer)
       : await serveWithNode(fetch, config),
   );
+
+  let schedules;
+  try {
+    schedules = startScheduledActions(services);
+  } catch (error) {
+    await server.stop(true);
+    throw error;
+  }
+  const stopServer = server.stop.bind(server);
+  server.stop = async (closeActiveConnections?: boolean) => {
+    schedules.stop();
+    await stopServer(closeActiveConnections);
+  };
 
   printStartupMessage(server, name, apiKey);
   void notifyAppsReady(config.apps, {

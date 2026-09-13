@@ -32,6 +32,7 @@ import {
 import type { ConsoleAction, ConsoleConfig } from "../../types";
 import { ActionInputField } from "./action-input-field";
 import { ActionResult } from "./action-result";
+import { ActionSchedule } from "./action-schedule";
 
 function toastResultDescription(result: ActionRunResult): string {
   const body = formatActionResultBody(result.body).trim();
@@ -434,6 +435,7 @@ export const ActionForm = forwardRef<
         className={isChatMode ? "hidden" : "space-y-4"}
         onSubmit={form.handleSubmit(submit)}
       >
+        <ActionSchedule action={action} />
         {action.input.map((field, index) => (
           <ActionInputField
             key={`${action.id}:${resetToken}:${field.name}`}

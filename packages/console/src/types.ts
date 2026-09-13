@@ -33,6 +33,10 @@ export type ConsoleAction = {
   source: "local" | "http" | "event" | "trait";
   input: ConsoleInputField[];
   inputSchema?: ConsoleJsonSchema;
+  schedule?: {
+    expression: string;
+    timezone: string;
+  };
   meta?: unknown;
 };
 

@@ -469,6 +469,13 @@ export type AddActionsToCtx<Ctx extends Record<any, any>, U> = {
     : Ctx[K];
 };
 
+export type AddActionsToCtxMany<
+  Ctx extends Record<any, any>,
+  Plugins extends readonly unknown[]
+> = Plugins extends readonly [infer Plugin, ...infer Rest]
+  ? AddActionsToCtxMany<AddActionsToCtx<Ctx, Plugin>, Rest>
+  : Ctx;
+
 type DefaultContextActionKeys = "generateText";
 
 type DeepPartialContext<T> = T extends (...args: any[]) => any

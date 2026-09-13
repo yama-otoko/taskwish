@@ -127,4 +127,28 @@ describe("console config", () => {
     expect(config.actions).toHaveLength(1);
     expect(config.actions[0]!.mode).toBe("chat");
   });
+
+  test("describes schedules with the effective server timezone", () => {
+    const scheduled = (() => undefined) as (() => undefined) &
+      Record<symbol, unknown>;
+    scheduled[Symbol.for("TW.Meta")] = {
+      schedule: {
+        expression: "0 9 * * 1-5",
+        timezone: "Europe/Belgrade",
+      },
+    };
+
+    const config = consoleConfig(
+      {
+        actions: new Map([["Revenue::refreshRevenue", scheduled]]),
+        states: new Map(),
+      },
+      { nodeName: "Test", apiKey: "test", prefix: "/tw" },
+    );
+
+    expect(config.actions[0]!.schedule).toEqual({
+      expression: "0 9 * * 1-5",
+      timezone: "Europe/Belgrade",
+    });
+  });
 });

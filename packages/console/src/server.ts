@@ -352,6 +352,25 @@ function isMessageEventAction(meta: Record<string, unknown>): boolean {
   return meta.event === "Message";
 }
 
+function scheduleForMeta(
+  meta: Record<string, unknown>,
+): ConsoleAction["schedule"] {
+  if (!isRecord(meta.schedule)) return undefined;
+
+  const expression = meta.schedule.expression;
+  if (typeof expression !== "string" || expression.trim().length === 0) {
+    return undefined;
+  }
+
+  const configuredTimezone = meta.schedule.timezone;
+  const timezone =
+    typeof configuredTimezone === "string" && configuredTimezone.length > 0
+      ? configuredTimezone
+      : Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  return { expression, timezone };
+}
+
 function describeAction(
   actionName: string,
   action: Action,
@@ -381,6 +400,7 @@ function describeAction(
     source: sourceForMeta(meta),
     input,
     inputSchema,
+    schedule: scheduleForMeta(meta),
     meta,
   };
 }

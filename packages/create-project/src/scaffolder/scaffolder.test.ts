@@ -122,6 +122,13 @@ describe("Scaffolder.createProject", () => {
       ["OpenBanking"],
       "src/open-banking/open-banking.test.ts",
     ],
+    [
+      "revenue-monitor",
+      "src/revenue-monitor/monitor-revenue-on-schedule.ts",
+      "revenueMonitor",
+      ["OpenBanking", "Slack", "RevenueMonitor"],
+      "src/revenue-monitor/revenue-monitor.test.ts",
+    ],
   ] as const)(
     "creates the %s TypeScript template",
     async (template, actionPath, actorSource, actorNames, testPath) => {
@@ -175,7 +182,8 @@ describe("Scaffolder.createProject", () => {
         template === "freight-operator" ||
         template === "options-analyst" ||
         template === "equipment-diagnostician" ||
-        template === "open-banking"
+        template === "open-banking" ||
+        template === "revenue-monitor"
           ? "bun test src"
           : "bun test"
       );
@@ -372,6 +380,43 @@ describe("Scaffolder.createProject", () => {
           '.on("Command", "syncBankConnection")'
         );
         expect(startConnectionSource).not.toContain("secretId");
+      }
+      if (template === "revenue-monitor") {
+        const monitorSource = await readFile(
+          join(
+            destination,
+            "src/revenue-monitor/monitor-revenue-on-schedule.ts"
+          ),
+          "utf8"
+        );
+        const modelSource = await readFile(
+          join(destination, "src/revenue-monitor/revenue-monitor.ts"),
+          "utf8"
+        );
+        const bankingSource = await readFile(
+          join(destination, "src/open-banking/get-account-revenue.ts"),
+          "utf8"
+        );
+        const slackSource = await readFile(
+          join(destination, "src/slack/post-message.ts"),
+          "utf8"
+        );
+        expect(packageJson.dependencies["@taskwish/symbolic"]).toBe(
+          `^${templateVersions["@taskwish/symbolic"]}`
+        );
+        expect(modelSource).toContain('"growth"');
+        expect(modelSource).toContain("y == t / 2 + sin(t)");
+        expect(monitorSource).toContain('.on("Schedule", "0 9 1 * *")');
+        expect(monitorSource).toContain('.command("revenueMonitor")');
+        expect(monitorSource).toContain("this.growth.solve(");
+        expect(monitorSource).toContain(
+          "this.actions.openBanking.getAccountRevenue"
+        );
+        expect(monitorSource).toContain("this.actions.slack.postMessage");
+        expect(bankingSource).toContain("bankDataRequest<TransactionsResponse>");
+        expect(slackSource).toContain(
+          'fetch("https://slack.com/api/chat.postMessage"'
+        );
       }
       if (template === "software-factory") {
         const codingSource = await readFile(
