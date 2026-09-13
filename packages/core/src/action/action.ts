@@ -9,7 +9,7 @@ import {
   InferTriggerScope,
   Pretty,
   CamelCase,
-  AddActionsToCtx,
+  AddActionsToCtxMany,
   DeepWriteable,
   QualifiedActionName,
   isUnionSchema,
@@ -183,7 +183,9 @@ type ActionBody<
   use<const F extends string | undefined>(
     config: InferTypeConfig<F>
   ): ActionBody<Name, AppendPlugin<Ctx, InferTypeConfig<F>>>;
-  use<const U>(plugin: U): ActionBody<Name, AddActionsToCtx<Ctx, U>>;
+  use<const Plugins extends readonly unknown[]>(
+    ...plugins: Plugins
+  ): ActionBody<Name, AddActionsToCtxMany<Ctx, Plugins>>;
   run: Steps<Ctx, ActionResultKind>;
 };
 
@@ -292,9 +294,9 @@ type SignatureBody<
   use<const F extends string | undefined>(
     config: InferTypeConfig<F>
   ): SignatureBody<Name, AppendPlugin<Ctx, InferTypeConfig<F>>, Signature>;
-  use<const U>(
-    plugin: U
-  ): SignatureBody<Name, AddActionsToCtx<Ctx, U>, Signature>;
+  use<const Plugins extends readonly unknown[]>(
+    ...plugins: Plugins
+  ): SignatureBody<Name, AddActionsToCtxMany<Ctx, Plugins>, Signature>;
   run<
     const Handler extends (
       this: TW.Scope<
@@ -355,7 +357,9 @@ export interface ActionFactory<
   use<const F extends string | undefined>(
     config: InferTypeConfig<F>
   ): ActionFactory<Name, AppendPlugin<Ctx, InferTypeConfig<F>>>;
-  use<const U>(plugin: U): ActionFactory<Name, AddActionsToCtx<Ctx, U>>;
+  use<const Plugins extends readonly unknown[]>(
+    ...plugins: Plugins
+  ): ActionFactory<Name, AddActionsToCtxMany<Ctx, Plugins>>;
   sig<
     const Schema extends ((...args: any) => any) | TW.Handler
   >(): SignatureBody<Name, Ctx, Schema>;
@@ -1839,8 +1843,8 @@ export function Action<const Name extends string>(
       };
       return this;
     },
-    use(config: unknown) {
-      usePlugin(config);
+    use(...configs: unknown[]) {
+      for (const config of configs) usePlugin(config);
       return this;
     },
     run(...handlers: unknown[]) {
@@ -1855,8 +1859,8 @@ export function Action<const Name extends string>(
     input(...schema: unknown[]) {
       return makeBody("first", schema.length <= 1 ? schema[0] : schema);
     },
-    use(config: unknown) {
-      usePlugin(config);
+    use(...configs: unknown[]) {
+      for (const config of configs) usePlugin(config);
       return this;
     },
     run(...handlers: unknown[]) {

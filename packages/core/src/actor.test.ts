@@ -749,6 +749,50 @@ describe("Actor", () => {
     );
   });
 
+  test("Schedule — supports command names with runtime metadata", async () => {
+    const { actor } = Actor("Scheduler");
+
+    const { refreshRevenue } = actor()
+      .on("Schedule", {
+        expression: "0 9 * * 1-5",
+        timezone: "Europe/Belgrade",
+        protect: true,
+      })
+      .command("refreshRevenue")
+
+      .run(function () {
+        return this.input.at;
+      });
+
+    expect(refreshRevenue[TW.Name]).toBe("Scheduler::refreshRevenue");
+    expect(refreshRevenue[TW.Meta]).toEqual({
+      schedule: {
+        expression: "0 9 * * 1-5",
+        timezone: "Europe/Belgrade",
+        protect: true,
+      },
+    });
+
+    const at = new Date("2026-01-13T08:00:00Z");
+    expect(await refreshRevenue({ at })).toEqual(at);
+  });
+
+  test("Schedule — always defaults to onSchedule", async () => {
+    const { actor } = Actor("Accounting");
+
+    const { onSchedule } = actor()
+      .on("Schedule", "0 9 1 * *")
+
+      .run(function () {
+        return this.input.expression;
+      });
+
+    expect(onSchedule[TW.Name]).toBe("Accounting::onSchedule");
+    expect(onSchedule[TW.Meta]).toEqual({
+      schedule: { expression: "0 9 1 * *" },
+    });
+  });
+
   test("GET — with schema and command, named action takes flat input and route metadata", async () => {
     const { actor } = Actor("InvoiceProvider").scope(
       Event("InvoiceFetched", { id: "string", page: "string" })
@@ -1629,7 +1673,7 @@ describe("Actor", () => {
       );
     });
 
-    test("merges actions from multiple .use() calls preserving prior services", async () => {
+    test("merges actions from variadic .use() preserving every service", async () => {
       const { sendEmail } = Actor("Emailer")
         .actor()
 
@@ -1656,8 +1700,7 @@ describe("Actor", () => {
       const { Texter } = Actor("Texter").actor().service({ sendText });
 
       const { dispatch } = Actor("Dispatcher")
-        .use(Emailer)
-        .use(Texter)
+        .use(Emailer, Texter)
         .actor()
         .on("Command", "dispatch")
 

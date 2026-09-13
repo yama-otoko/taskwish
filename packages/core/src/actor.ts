@@ -23,7 +23,7 @@ import {
   ExtractActionName,
   ActionRecordName,
   ActionCtx,
-  AddActionsToCtx,
+  AddActionsToCtxMany,
   DeepWriteable,
   QualifiedActionName,
   QualifiedEventName,
@@ -121,6 +121,23 @@ type ActorEventExports<Scope, Actor extends string> = Pretty<{
 }>;
 
 export type ScheduleInput = { expression: string; at: Date };
+export type ScheduleDefinition = {
+  expression: string;
+  timezone?: string;
+  protect?: boolean;
+};
+
+type ScheduleActionFactory<
+  Ctx extends Record<any, any>,
+  Name extends string = "onSchedule"
+> = ActionFactory<Name, Ctx> & {
+  command<const CommandName extends string>(
+    name: CamelCase<CommandName>
+  ): ScheduleActionFactory<
+    Pretty<Omit<Ctx, "name"> & { name: CommandName }>,
+    CommandName
+  >;
+};
 
 export type HttpEvent = {
   params?: Record<string, string>;
@@ -358,7 +375,9 @@ const builtInEventScope = {
 
 export interface Behavior<Ctx extends Record<any, any>> {
   use(config: LoggerConfig): this;
-  use<const U>(plugin: U): Behavior<AddActionsToCtx<Ctx, U>>;
+  use<const Plugins extends readonly unknown[]>(
+    ...plugins: Plugins
+  ): Behavior<AddActionsToCtxMany<Ctx, Plugins>>;
   service<const Config extends Record<string, unknown> = {}>(
     config?: Config & { public?: never; listeners?: never }
   ): ServiceResult<
@@ -377,9 +396,8 @@ export interface Behavior<Ctx extends Record<any, any>> {
 
   on(
     behavior: "Schedule",
-    expression?: string
-  ): ActionFactory<
-    "onSchedule",
+    expression: string | ScheduleDefinition
+  ): ScheduleActionFactory<
     {
       name: "onSchedule";
       service: Ctx["name"];
@@ -554,12 +572,18 @@ type BehaviorMod = { args: unknown[]; scope: Record<string, unknown> };
 
 function makeBehaviorMod(
   behavior: string,
-  config?: string,
+  config?: unknown,
   schema?: unknown
 ): (args: unknown[]) => BehaviorMod {
   if (behavior === "Schedule") {
+    const schedule = normalizeScheduleDefinition(config);
     return (args) => ({
-      args: [{ expression: config, ...(args[0] as Record<string, unknown>) }],
+      args: [
+        {
+          expression: schedule?.expression,
+          ...(args[0] as Record<string, unknown>),
+        },
+      ],
       scope: {},
     });
   }
@@ -572,7 +596,10 @@ function makeBehaviorMod(
           const url = new URL((arg as Request).url);
           extracted = {
             path: url.pathname,
-            params: config ? matchPathParams(config, url.pathname) : {},
+            params:
+              typeof config === "string"
+                ? matchPathParams(config, url.pathname)
+                : {},
             query: Object.fromEntries(url.searchParams.entries()),
           };
         } else {
@@ -587,6 +614,25 @@ function makeBehaviorMod(
     });
   }
   return (args) => ({ args, scope: {} });
+}
+
+function normalizeScheduleDefinition(
+  value: unknown
+): ScheduleDefinition | undefined {
+  if (typeof value === "string") return { expression: value };
+  if (value === null || typeof value !== "object") return undefined;
+
+  const definition = value as Record<string, unknown>;
+  if (typeof definition.expression !== "string") return undefined;
+  return {
+    expression: definition.expression,
+    ...(typeof definition.timezone === "string"
+      ? { timezone: definition.timezone }
+      : {}),
+    ...(typeof definition.protect === "boolean"
+      ? { protect: definition.protect }
+      : {}),
+  };
 }
 
 function wrapUnionInput(args: unknown[], inputSchema: unknown): unknown[] {
@@ -755,22 +801,24 @@ function createBehavior(
   }
 
   const self = {
-    use(plugin: unknown) {
-      applyScopedUse(
-        plugin,
-        (incoming) => {
-          behaviorScope = mergeActorScope(behaviorScope, incoming);
-        },
-        (incoming) => {
-          pendingBehaviorScopes.push(incoming);
-        }
-      );
+    use(...plugins: unknown[]) {
+      for (const plugin of plugins) {
+        applyScopedUse(
+          plugin,
+          (incoming) => {
+            behaviorScope = mergeActorScope(behaviorScope, incoming);
+          },
+          (incoming) => {
+            pendingBehaviorScopes.push(incoming);
+          }
+        );
+      }
       return self;
     },
     service(config: unknown) {
       return createService(actorName, config, currentInitialScope());
     },
-    on(behaviorInput: unknown, config?: string, schema?: unknown) {
+    on(behaviorInput: unknown, config?: unknown, schema?: unknown) {
       const eventKind = isEventKind(behaviorInput) ? behaviorInput : null;
       const traitEvent = getTraitEventName(behaviorInput);
       const traitMethod = getTraitMethodName(behaviorInput);
@@ -816,7 +864,9 @@ function createBehavior(
         actionName = toCamelCaseName(traitMethod.slice(2));
         traitMeta = traitMethod;
       } else if (behavior === "Command") {
-        actionName = config!;
+        actionName = String(config);
+      } else if (behavior === "Schedule") {
+        actionName = "onSchedule";
       } else if (HTTP_METHODS.has(behavior)) {
         actionName = behavior;
       } else {
@@ -825,9 +875,14 @@ function createBehavior(
         eventMeta = behavior;
       }
 
-      const eventName = qualifyActionName(actorName, actionName);
+      let eventName = qualifyActionName(actorName, actionName);
       const mod = makeBehaviorMod(behavior, config, schema);
-      let actionMeta: Record<string, unknown> | null = null;
+      let actionMeta: Record<string, unknown> | null =
+        behavior === "Schedule"
+          ? {
+              schedule: normalizeScheduleDefinition(config),
+            }
+          : null;
 
       async function resolveActionScope() {
         let resolved = await resolveBehaviorScope();
@@ -995,8 +1050,8 @@ function createBehavior(
           };
           return this;
         },
-        use(plugin?: unknown) {
-          if (arguments.length > 0) useActionPlugin(plugin);
+        use(...plugins: unknown[]) {
+          for (const plugin of plugins) useActionPlugin(plugin);
           return this;
         },
         run(...handlers: unknown[]) {
@@ -1014,8 +1069,8 @@ function createBehavior(
             inputSchema.length <= 1 ? inputSchema[0] : inputSchema
           );
         },
-        use(plugin?: unknown) {
-          if (arguments.length > 0) useActionPlugin(plugin);
+        use(...plugins: unknown[]) {
+          for (const plugin of plugins) useActionPlugin(plugin);
           return this;
         },
         run(...handlers: unknown[]) {
@@ -1023,14 +1078,26 @@ function createBehavior(
         },
       };
 
+      if (behavior === "Schedule") {
+        const scheduled = {
+          ...base,
+          command(cmdName: string) {
+            actionName = cmdName;
+            eventName = qualifyActionName(actorName, cmdName);
+            return scheduled;
+          },
+        };
+        return scheduled as any;
+      }
+
       if (HTTP_METHODS.has(behavior) && schema) {
         return {
           ...base,
           command(cmdName: string) {
             let commandMeta: Record<string, unknown> = {};
             return {
-              use(plugin?: unknown) {
-                if (arguments.length > 0) useActionPlugin(plugin);
+              use(...plugins: unknown[]) {
+                for (const plugin of plugins) useActionPlugin(plugin);
                 return this;
               },
               run(...handlers: unknown[]) {
@@ -1168,7 +1235,9 @@ export type ActorBuilderResult<
   Ctx extends Record<any, any>
 > = {
   scope: Steps<Ctx, ScopeResultKind>;
-  use<const U>(plugin: U): ActorBuilderResult<Name, AddActionsToCtx<Ctx, U>>;
+  use<const Plugins extends readonly unknown[]>(
+    ...plugins: Plugins
+  ): ActorBuilderResult<Name, AddActionsToCtxMany<Ctx, Plugins>>;
 } & {
   actor: ActorFactory<Ctx>;
 } & Omit<Behavior<Ctx>, "use">;
@@ -1635,27 +1704,21 @@ function makeActorBuilder(
       } as any;
     },
 
-    use(plugin: unknown): any {
-      if (
-        plugin !== null &&
-        typeof plugin === "object" &&
-        "then" in (plugin as object)
-      ) {
-        return makeActorBuilder(actorName, actorScope, [
-          ...pendingPlugins,
-          Promise.resolve(plugin).then(collectPluginScope),
-        ]);
+    use(...plugins: unknown[]): any {
+      let nextScope = actorScope;
+      const nextPending = [...pendingPlugins];
+      for (const plugin of plugins) {
+        if (isPromiseLike(plugin)) {
+          nextPending.push(Promise.resolve(plugin).then(collectPluginScope));
+          continue;
+        }
+
+        const incoming = collectPluginScope(plugin);
+        if (Reflect.ownKeys(incoming).length > 0) {
+          nextScope = mergeActorScope(nextScope, incoming);
+        }
       }
-
-      const incoming = collectPluginScope(plugin);
-      if (Reflect.ownKeys(incoming).length === 0)
-        return makeActorBuilder(actorName, actorScope);
-
-      return makeActorBuilder(
-        actorName,
-        mergeActorScope(actorScope, incoming),
-        pendingPlugins
-      );
+      return makeActorBuilder(actorName, nextScope, nextPending);
     },
 
     // Fluent `.on()` — delegates to a lazily-created Behavior so callers

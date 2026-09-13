@@ -12,4 +12,6 @@ export type {
 export { createNodeRegistry } from "./registry";
 export { createMcpRoutes } from "./mcp";
 export { createFetchHandler, createRoutes } from "./routes";
+export { startScheduledActions } from "./schedule";
+export type { ScheduledActions, ScheduleErrorHandler } from "./schedule";
 export { Server } from "./server";
