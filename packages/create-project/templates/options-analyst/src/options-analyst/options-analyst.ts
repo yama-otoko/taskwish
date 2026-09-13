@@ -1,13 +1,5 @@
-import { Actor, Provider } from "taskwish";
+import { Actor, OpenAI } from "taskwish";
 import { Model, Real } from "@taskwish/symbolic";
-
-export const openAIModel = process.env.OPENAI_MODEL || "gpt-6-astra";
-
-const { OpenAI } = Provider("OpenAI", {
-  baseURL: "https://api.openai.com/v1",
-  apiKey: process.env.OPENAI_API_KEY,
-  models: [openAIModel],
-});
 
 export const { actor } = Actor("OptionsAnalyst")
   .use(OpenAI)

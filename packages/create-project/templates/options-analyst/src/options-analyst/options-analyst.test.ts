@@ -1,16 +1,8 @@
-import { afterEach, expect, mock, test } from "bun:test";
+import { expect, mock, test } from "bun:test";
 
 import { OptionsAnalyst } from ".";
 
-const originalKey = process.env.OPENAI_API_KEY;
-
-afterEach(() => {
-  if (originalKey === undefined) delete process.env.OPENAI_API_KEY;
-  else process.env.OPENAI_API_KEY = originalKey;
-});
-
 test("calculates with symbolic models before asking the mocked OpenAI agent", async () => {
-  process.env.OPENAI_API_KEY = "test-key";
   const generate = mock(
     async (_options: { prompt: string; abortSignal?: AbortSignal }) =>
       "Delta is the main directional exposure.",
@@ -47,7 +39,6 @@ test("calculates with symbolic models before asking the mocked OpenAI agent", as
 });
 
 test("rejects invalid inputs before invoking the agent", async () => {
-  process.env.OPENAI_API_KEY = "test-key";
   const generate = mock(async () => "unused");
 
   await expect(

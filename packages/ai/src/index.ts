@@ -4,5 +4,6 @@ export * from "./codex-agent";
 export * from "./fx-agent";
 export * from "./generate-text";
 export * from "./provider";
+export * from "./providers";
 export * from "./tool";
 export { Output, jsonSchema } from "ai";

@@ -12,7 +12,7 @@ const pages: DocPage[] = [
     content: <>
       <h2>Requirements</h2><p>TaskWish uses <a href="https://bun.sh" target="_blank" rel="noreferrer">Bun</a> by default and also supports Node.js 20+. Use <code>bunx</code> and <code>bun</code>, <code>npx</code> and <code>npm run start:node</code>, or the platform installer.</p>
       <CodeBlock title="Terminal" language="sh" code={`${createCommand}\ncd my-taskwish-app\nbun start`} />
-      <h2>Choose a starter</h2><p>The interactive installer offers eleven templates, including <code>revenue-monitor</code> for scheduled symbolic checks backed by Open Banking and Slack.</p>
+      <h2>Choose a starter</h2><p>The interactive installer offers twelve templates, including <code>cournot-competition</code> for a symbolically verified game-theory workflow explained by Anthropic.</p>
       <CodeBlock title="Terminal" language="sh" code="bunx @taskwish/create-project my-app --template todo" />
       <h2>Your project</h2><p><code>taskwish.ts</code> starts the server. Each actor lives in its own folder with an actor definition, one file per action, an index that exports the service, and a colocated test.</p>
       <CodeBlock title="taskwish.ts" code={`import { Console } from "@taskwish/console";\nimport { Server } from "@taskwish/server";\nimport { Greeter } from "./src/greeter";\n\nawait Server("TaskWish Greeter", {\n  apps: [Console()],\n  workspace: [Greeter],\n});`} />
@@ -54,10 +54,10 @@ const pages: DocPage[] = [
   {
     slug: "agents", title: "Agents & tools", description: "Place model reasoning inside typed, testable workflows.",
     content: <>
-      <h2>Configure a provider</h2><p>Providers are ordinary actor dependencies. The included examples use a local OpenAI-compatible Ollama endpoint, but the workflow is not tied to one model host.</p>
-      <CodeBlock code={`import { Actor, Provider } from "taskwish";\n\nexport const { Ollama } = Provider("Ollama", {\n  baseURL: process.env.OLLAMA_BASE_URL\n    ?? "http://127.0.0.1:11434/v1",\n  models: ["qwen3:4b"],\n});\n\nexport const { actor } = Actor("Researcher")\n  .use(Ollama);`} />
+      <h2>Configure a provider</h2><p>Providers are ordinary actor dependencies. OpenAI, Anthropic, and Google ship with typed model catalogs and read <code>TW_OPEN_AI_KEY</code>, <code>TW_ANTHROPIC_KEY</code>, and <code>TW_GOOGLE_AI_KEY</code>. Use <code>Provider</code> for custom OpenAI-compatible hosts.</p>
+      <CodeBlock code={`import { Actor, Anthropic } from "taskwish";\n\nexport const { actor } = Actor("Researcher")\n  .use(Anthropic);`} />
       <h2>Agent steps</h2><p>Agents can reason and call declared tools while deterministic steps prepare inputs, validate results, and produce side effects. Their streamed lifecycle is visible in Console.</p>
-      <CodeBlock title="src/researcher/research.ts" code={`import { Agent, Step } from "taskwish";\nimport { actor } from "./researcher";\n\nexport const { research } = actor()\n  .on("Command", "research")\n\n  .input({ question: "string" })\n\n  .run(\n    Agent({\n      model: "ollama/qwen3:4b",\n      instructions: "Answer with concise, cited findings.",\n    }),\n\n    Step("answerQuestion", function () {\n      return this.agent.generate({ prompt: this.input.question });\n    }),\n  )\n\n  .meta({\n    description: "Research a question with a local model",\n  });`} />
+      <CodeBlock title="src/researcher/research.ts" code={`import { Agent, Step } from "taskwish";\nimport { actor } from "./researcher";\n\nexport const { research } = actor()\n  .on("Command", "research")\n\n  .input({ question: "string" })\n\n  .run(\n    Agent({\n      model: "anthropic/claude-sonnet-4-6",\n      instructions: "Answer with concise, cited findings.",\n    }),\n\n    Step("answerQuestion", function () {\n      return this.agent.generate({ prompt: this.input.question });\n    }),\n  )\n\n  .meta({\n    description: "Research a question with Claude",\n  });`} />
       <h2>Start from a working architecture</h2><p>The <code>agent-loops</code> template includes 18 patterns such as ReAct, reflection, evaluator-optimizer, supervisor-worker, and human approval. The <code>agent-graphs</code> template includes six topologies for routing, parallel work, map-reduce, hierarchy, and fallback.</p>
       <CodeBlock title="Terminal" language="sh" code="bunx @taskwish/create-project my-agents --template agent-loops" />
       <Callout>Unit tests inject mock agents, so your test suite does not need a model server or API credentials.</Callout>

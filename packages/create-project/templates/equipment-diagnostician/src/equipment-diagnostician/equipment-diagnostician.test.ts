@@ -1,14 +1,7 @@
-import { afterEach, expect, mock, test } from "bun:test";
+import { expect, mock, test } from "bun:test";
 
 import type { ExtractedObservations } from "../shared/observations";
 import { EquipmentDiagnostician } from ".";
-
-const originalKey = process.env.OPENAI_API_KEY;
-
-afterEach(() => {
-  if (originalKey === undefined) delete process.env.OPENAI_API_KEY;
-  else process.env.OPENAI_API_KEY = originalKey;
-});
 
 function observations(
   overrides: Partial<ExtractedObservations> = {},
@@ -29,7 +22,6 @@ function observations(
 }
 
 test("combines neural extraction, symbolic rules, and grounded explanation", async () => {
-  process.env.OPENAI_API_KEY = "test-key";
   const perception = mock(
     async (_options: { prompt: string; abortSignal?: AbortSignal }) =>
       observations({
@@ -69,7 +61,6 @@ test("combines neural extraction, symbolic rules, and grounded explanation", asy
 });
 
 test("fails closed on conflicting or hazardous evidence", async () => {
-  process.env.OPENAI_API_KEY = "test-key";
   const perception = mock(async () =>
     observations({
       motorStarts: {
@@ -96,7 +87,6 @@ test("fails closed on conflicting or hazardous evidence", async () => {
 });
 
 test("rejects malformed neural output before symbolic reasoning", async () => {
-  process.env.OPENAI_API_KEY = "test-key";
   const explanation = mock(async () => "unused");
 
   await expect(
@@ -116,7 +106,6 @@ test("rejects malformed neural output before symbolic reasoning", async () => {
 });
 
 test("rejects invalid input before invoking either agent", async () => {
-  process.env.OPENAI_API_KEY = "test-key";
   const perception = mock(async () => observations());
   const explanation = mock(async () => "unused");
 

@@ -6,7 +6,7 @@ import {
   parseObservations,
   symbolicFlags,
 } from "../shared/observations";
-import { actor, openAIModel } from "./equipment-diagnostician";
+import { actor } from "./equipment-diagnostician";
 
 const perceptionInstructions = [
   "Extract only explicit equipment observations from the maintenance report.",
@@ -32,9 +32,6 @@ export const { diagnoseReport } = actor()
 
   .run(
     Step("validateInput", function () {
-      if (!process.env.OPENAI_API_KEY) {
-        throw new Error("OPENAI_API_KEY is required for equipment diagnosis.");
-      }
       const report = this.input.report.trim();
       if (!report || report.length > 20_000) {
         throw new Error("Provide 1–20,000 characters of maintenance report text.");
@@ -48,7 +45,7 @@ export const { diagnoseReport } = actor()
     }),
 
     Agent("perceptionAgent", {
-      model: `openai/${openAIModel}`,
+      model: "openai/gpt-6-astra",
       instructions: perceptionInstructions,
       output: Output.object({
         schema: jsonSchema<ExtractedObservations>(observationsJsonSchema),
@@ -58,7 +55,7 @@ export const { diagnoseReport } = actor()
     }),
 
     Agent("explanationAgent", {
-      model: `openai/${openAIModel}`,
+      model: "openai/gpt-6-astra",
       instructions: explanationInstructions,
     }),
 
