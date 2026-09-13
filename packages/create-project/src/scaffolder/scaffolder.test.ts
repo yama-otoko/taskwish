@@ -109,6 +109,13 @@ describe("Scaffolder.createProject", () => {
       "src/options-analyst/options-analyst.test.ts",
     ],
     [
+      "cournot-competition",
+      "src/cournot-competition/analyze-competition.ts",
+      "analyzeCompetition",
+      ["CournotCompetition"],
+      "src/cournot-competition/cournot-competition.test.ts",
+    ],
+    [
       "equipment-diagnostician",
       "src/equipment-diagnostician/diagnose-report.ts",
       "diagnoseReport",
@@ -181,6 +188,7 @@ describe("Scaffolder.createProject", () => {
         template === "document-extractor" ||
         template === "freight-operator" ||
         template === "options-analyst" ||
+        template === "cournot-competition" ||
         template === "equipment-diagnostician" ||
         template === "open-banking" ||
         template === "revenue-monitor"
@@ -335,6 +343,29 @@ describe("Scaffolder.createProject", () => {
         expect(formulaSource).toContain('"greeksFormula"');
         expect(optionsSource).toContain("this.greeksFormula.solve(");
         expect(optionsSource).toContain("this.agent.generate(");
+      }
+      if (template === "cournot-competition") {
+        const actionSource = await readFile(
+          join(
+            destination,
+            "src/cournot-competition/analyze-competition.ts"
+          ),
+          "utf8"
+        );
+        const modelSource = await readFile(
+          join(
+            destination,
+            "src/cournot-competition/cournot-competition.ts"
+          ),
+          "utf8"
+        );
+        expect(packageJson.dependencies["@taskwish/symbolic"]).toBe(
+          `^${templateVersions["@taskwish/symbolic"]}`
+        );
+        expect(modelSource).toContain(".use(Anthropic)");
+        expect(modelSource).toContain('"cournotEquilibrium"');
+        expect(actionSource).toContain("this.cournotEquilibrium.solve(");
+        expect(actionSource).toContain("this.agent.generate(");
       }
       if (template === "equipment-diagnostician") {
         const diagnosisSource = await readFile(

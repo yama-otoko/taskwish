@@ -4,7 +4,7 @@ import {
   evaluateDistributionFunctions,
   evaluateInputFunctions,
 } from "../shared/greeks";
-import { actor, openAIModel } from "./options-analyst";
+import { actor } from "./options-analyst";
 
 const analystInstructions = [
   "Explain a deterministic European call-option risk snapshot for education.",
@@ -30,9 +30,6 @@ export const { analyzeCall } = actor()
 
   .run(
     Step("validateInputs", function () {
-      if (!process.env.OPENAI_API_KEY) {
-        throw new Error("OPENAI_API_KEY is required for options analysis.");
-      }
       const { spot, strike, rate, volatility, daysToExpiry } = this.input;
       for (const [name, value] of Object.entries({
         spot,
@@ -99,7 +96,7 @@ export const { analyzeCall } = actor()
     }),
 
     Agent({
-      model: `openai/${openAIModel}`,
+      model: "openai/gpt-6-astra",
       instructions: analystInstructions,
     }),
 

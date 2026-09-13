@@ -20,7 +20,7 @@ Install [Z3](https://github.com/Z3Prover/z3), then configure OpenAI:
 
 ```sh
 cp .env.example .env
-# Add OPENAI_API_KEY to .env
+# Add TW_OPEN_AI_KEY to .env
 bun install
 bun start
 ```

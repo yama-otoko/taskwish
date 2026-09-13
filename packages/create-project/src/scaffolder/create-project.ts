@@ -17,6 +17,7 @@ export const TEMPLATE_NAMES = [
   "document-extractor",
   "freight-operator",
   "options-analyst",
+  "cournot-competition",
   "equipment-diagnostician",
   "open-banking",
   "revenue-monitor",
@@ -94,6 +95,7 @@ export const { createProject } = actor()
         template !== "document-extractor" &&
         template !== "freight-operator" &&
         template !== "options-analyst" &&
+        template !== "cournot-competition" &&
         template !== "equipment-diagnostician" &&
         template !== "open-banking" &&
         template !== "revenue-monitor"
@@ -333,6 +335,12 @@ export const { createProject } = actor()
               label: "Options analyst",
               description:
                 "Symbolically verified option Greeks explained by OpenAI",
+            },
+            {
+              value: "cournot-competition",
+              label: "Cournot competition",
+              description:
+                "A symbolically verified Nash equilibrium explained by Anthropic",
             },
             {
               value: "equipment-diagnostician",

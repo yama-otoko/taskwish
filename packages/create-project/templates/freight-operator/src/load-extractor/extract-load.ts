@@ -1,7 +1,7 @@
 import { Agent, Output, Step, jsonSchema } from "taskwish";
 
 import { type Load, loadJsonSchema, parseLoad } from "../shared/load";
-import { actor, openAIModel } from "./load-extractor";
+import { actor } from "./load-extractor";
 
 const extractionInstructions = [
   "Extract exactly one freight load from the supplied email and document text.",
@@ -20,16 +20,13 @@ export const { extractLoad } = actor()
 
   .run(
     Step("validateSource", function () {
-      const key = process.env.OPENAI_API_KEY;
-      if (!key)
-        throw new Error("OPENAI_API_KEY is required for load extraction.");
       if (!this.input.markdown.trim() || this.input.markdown.length > 120_000)
         throw new Error("Provide 1–120,000 characters of source text.");
       return this.input.markdown;
     }),
 
     Agent({
-      model: `openai/${openAIModel}`,
+      model: "openai/gpt-6-astra",
       instructions: extractionInstructions,
       output: Output.object({
         schema: jsonSchema<Load>(loadJsonSchema),

@@ -40,14 +40,15 @@ Generate this template with the create-project CLI:
 bunx @taskwish/create-project my-freight-app --template freight-operator --yes
 cd my-freight-app
 cp .env.example .env
-# Set OPENAI_API_KEY and the McLeod configuration in .env.
+# Set TW_OPEN_AI_KEY and the McLeod configuration in .env.
 bun start
 ```
 
 Inside this repository, run `bun install` and `bun start` from this template
 directory. Use the Console URL and operator API key printed at startup. Bun
 loads `.env`; for Node.js 20+, use `npm install`, export the environment variables,
-then run `npm run start:node`. `OPENAI_MODEL` is configurable.
+then run `npm run start:node`. The example uses the typed `openai/gpt-6-astra`
+model identifier.
 
 The server starts without external credentials. Extraction requires OpenAI
 credentials; approval requires McLeod credentials. Tests need neither:
