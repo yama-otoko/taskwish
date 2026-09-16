@@ -2,6 +2,7 @@ import { Console } from "@taskwish/console";
 import { Server } from "@taskwish/server";
 
 import { BasicAgentLoop } from "./src/basic-agent-loop";
+import { Builder } from "./src/builder";
 import { DebateLoop } from "./src/debate-loop";
 import { EnvironmentLoop } from "./src/environment-loop";
 import { EvaluatorOptimizerLoop } from "./src/evaluator-optimizer-loop";
@@ -25,6 +26,7 @@ await Server("TaskWish Agent Loops", {
   port: Number(process.env.PORT ?? 0),
   apps: [Console()],
   workspace: [
+    Builder,
     BasicAgentLoop,
     ReActLoop,
     ToolCallingLoop,
