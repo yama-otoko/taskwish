@@ -1,6 +1,7 @@
 import { Console } from "@taskwish/console";
 import { Server } from "@taskwish/server";
 
+import { Builder } from "./src/builder";
 import { Documents } from "./src/documents";
 
 await Server("TaskWish Document Extractor", {
@@ -8,5 +9,5 @@ await Server("TaskWish Document Extractor", {
   apiKey: process.env.TW_API_KEY || undefined,
   mcp: false,
   apps: [Console()],
-  workspace: [Documents],
+  workspace: [Builder, Documents],
 });

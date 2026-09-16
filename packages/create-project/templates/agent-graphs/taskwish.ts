@@ -1,6 +1,7 @@
 import { Console } from "@taskwish/console";
 import { Server } from "@taskwish/server";
 
+import { Builder } from "./src/builder";
 import { FallbackGraph } from "./src/fallback-graph";
 import { HierarchicalGraph } from "./src/hierarchical-graph";
 import { MapReduceGraph } from "./src/map-reduce-graph";
@@ -12,6 +13,7 @@ await Server("TaskWish Agent Graphs", {
   port: Number(process.env.PORT ?? 0),
   apps: [Console()],
   workspace: [
+    Builder,
     SequentialGraph,
     RoutingGraph,
     ParallelGraph,

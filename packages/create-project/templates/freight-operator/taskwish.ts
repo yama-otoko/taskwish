@@ -1,6 +1,7 @@
 import { Console } from "@taskwish/console";
 import { Server } from "@taskwish/server";
 
+import { Builder } from "./src/builder";
 import { Documents } from "./src/documents";
 import { Emails } from "./src/emails";
 import { FreightOperator } from "./src/freight-operator";
@@ -12,5 +13,5 @@ await Server("TaskWish Freight Operator", {
   apiKey: process.env.TW_API_KEY || undefined,
   mcp: false,
   apps: [Console()],
-  workspace: [Documents, Emails, Gmail, LoadExtractor, FreightOperator],
+  workspace: [Builder, Documents, Emails, Gmail, LoadExtractor, FreightOperator],
 });
