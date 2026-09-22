@@ -67,7 +67,7 @@ test("rejects provider responses that violate the typed contract", async () => {
   ) as unknown as typeof fetch;
 
   await expect(TypeSafe.evaluateAgentRun.run(sampleRun())).rejects.toThrow(
-    "invalid noul answer for task_complete",
+    "invalid task completion probability",
   );
 });
 

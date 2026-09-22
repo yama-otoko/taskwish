@@ -475,20 +475,14 @@ describe("Scaffolder.createProject", () => {
           join(destination, "src/typesafe/evaluate-agent-run.ts"),
           "utf8"
         );
-        const clientSource = await readFile(
-          join(destination, "src/shared/typesafe.ts"),
-          "utf8"
-        );
-        expect(typeSafeSource).toContain('type: "noul"');
-        expect(typeSafeSource).toContain('type: "choice"');
-        expect(typeSafeSource).toContain('type: "score"');
-        expect(typeSafeSource).toContain("return systemOne({");
+        expect(typeSafeSource).toContain("ModelNoul(");
+        expect(typeSafeSource).toContain("ModelChoice(");
+        expect(typeSafeSource).toContain("ModelScore(");
+        expect(typeSafeSource).toContain('TypeSafe("evaluateRun"');
         expect(guardianSource).toContain(
           "this.actions.typeSafe.evaluateAgentRun"
         );
         expect(guardianSource).toContain('"PAGE_ON_CALL"');
-        expect(clientSource).toContain('"https://api.typesafe.ai"');
-        expect(clientSource).toContain('authorization: `Bearer ${apiKey}`');
       }
       if (template === "software-factory") {
         const codingSource = await readFile(

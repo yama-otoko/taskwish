@@ -6,4 +6,5 @@ export * from "./generate-text";
 export * from "./provider";
 export * from "./providers";
 export * from "./tool";
+export * from "./typesafe";
 export { Output, jsonSchema } from "ai";

@@ -45,11 +45,11 @@ bun run check
 
 ## Integration boundary
 
-`src/shared/typesafe.ts` mirrors the TypeSafe API v0.2 contract and handles
-authentication, timeout, HTTP errors, and runtime response validation. The
-`TypeSafe` actor turns that vendor contract into the stable
+TaskWish AI exposes a `TypeSafe("stepName", options)` workflow step and typed
+`ModelNoul`, `ModelChoice`, and `ModelScore` question builders. The `TypeSafe`
+actor turns that provider contract into the stable
 `evaluateAgentRun` domain action. If TypeSafe changes its API, update the
-shared client and keep the guardian policy unchanged.
+TaskWish AI dependency and keep the guardian policy unchanged.
 
 The example uses `jev-latest`; set `TYPESAFE_MODEL` to another model returned by
 `GET /v1/models`. Use `TYPESAFE_BASE_URL` only for a trusted proxy or test

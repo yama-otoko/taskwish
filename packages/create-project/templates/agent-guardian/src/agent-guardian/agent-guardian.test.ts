@@ -62,7 +62,12 @@ test("files an issue for a confident silent failure", async () => {
         type: "choice" as const,
         choice: "silent_failure",
         confidence: 0.95,
-        probabilities: { silent_failure: 0.96, healthy: 0.04 },
+        probabilities: {
+          healthy: 0.04,
+          expectation_gap: 0,
+          overt_failure: 0,
+          silent_failure: 0.96,
+        },
       },
     }),
   );
@@ -100,15 +105,25 @@ function evaluation(overrides: Record<string, unknown> = {}) {
     userSatisfied: { type: "noul" as const, noul: 0.9 },
     failureMode: {
       type: "choice" as const,
-      choice: "healthy",
+      choice: "healthy" as const,
       confidence: 0.9,
-      probabilities: { healthy: 0.94, expectation_gap: 0.06 },
+      probabilities: {
+        healthy: 0.94,
+        expectation_gap: 0.06,
+        overt_failure: 0,
+        silent_failure: 0,
+      },
     },
     reviewUrgency: {
       type: "score" as const,
       score: 0.1,
       confidence: 0.9,
-      legend: { "0": "none", "1": "normal", "2": "today", "3": "now" },
+      legend: {
+        "0": "No human review is needed." as const,
+        "1": "Review in the normal queue." as const,
+        "2": "Priority review is needed today." as const,
+        "3": "Page the on-call operator now." as const,
+      },
       probabilities: { "0": 0.95, "1": 0.03, "2": 0.01, "3": 0.01 },
     },
     usage: { input_tokens: 420, output_tokens: 25 },

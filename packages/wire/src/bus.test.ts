@@ -113,6 +113,7 @@ describe("Wire", () => {
       ["config_option_update", "ACP::ConfigOptionUpdate"],
       ["session_info_update", "ACP::SessionInfoUpdate"],
       ["usage_update", "ACP::UsageUpdate"],
+      ["notice", "ACP::Notice"],
       ["compaction_update", "ACP::CompactionUpdate"],
       ["compaction_summary_chunk", "ACP::CompactionSummaryChunk"],
     ] as const;

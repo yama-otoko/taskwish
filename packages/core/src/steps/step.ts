@@ -89,9 +89,26 @@ type ResolveYields<H extends (...args: any) => any> = IsAny<
   ? Y
   : never;
 
-type UserScope<Ctx extends Record<any, any>> = PrettyScope<
+export type StepScope<Ctx extends Record<any, any>> = PrettyScope<
   TW.Scope<ResolveScope<Ctx["scope"]>>
 >;
+
+export type StepDefinition<
+  Name extends string,
+  Ctx extends Record<any, any>,
+  Result,
+> = {
+  [TW.Step]: (ctx: Ctx) => {
+    name: Ctx["name"];
+    steps: Ctx extends { steps: infer Steps extends any[] }
+      ? [...Steps, TW.Step<Name, () => Promise<Result>>]
+      : [TW.Step<Name, () => Promise<Result>>];
+    step: Ctx["step"];
+    scope: Record<Name, RawEntry<Result>> & Ctx["scope"];
+    last: RawEntry<Result>;
+    plugins: Ctx["plugins"];
+  };
+};
 
 export function Step<
   Ctx extends Record<any, any>,
@@ -101,7 +118,7 @@ export function Step<
   const Handler extends Name extends keyof Ctx["step"]["map"]
     ? Ctx["step"]["map"][Name]
     : (
-        this: UserScope<Ctx>,
+        this: StepScope<Ctx>,
         source: Ctx["last"]["yields"] extends never
           ? Ctx["last"]["result"]
           : AsyncIterable<Ctx["last"]["yields"]>,
@@ -161,7 +178,7 @@ export function Step<
     : string,
   const Handler extends Name extends keyof Ctx["step"]["map"]
     ? Ctx["step"]["map"][Name]
-    : (this: UserScope<Ctx>) => any,
+    : (this: StepScope<Ctx>) => any,
   const Params extends Name extends keyof Ctx["step"]["map"]
     ? Ctx["step"]["map"][Name]
     : never,
@@ -196,7 +213,7 @@ export function Step<
     : string,
   const Handler extends Name extends keyof Ctx["step"]["map"]
     ? Ctx["step"]["map"][Name]
-    : (this: UserScope<Ctx>) => any,
+    : (this: StepScope<Ctx>) => any,
   const Params extends Name extends keyof Ctx["step"]["map"]
     ? Ctx["step"]["map"][Name]
     : never,

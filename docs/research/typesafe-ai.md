@@ -52,9 +52,10 @@ when an earlier answer changes what evidence or choices are available.
 
 ## Design decisions
 
-1. Keep the raw REST client in `src/shared/typesafe.ts`. The current public docs
-   show Python examples; using the small HTTP surface avoids adding a runtime
-   dependency and works in Bun and Node.js.
+1. Expose the official TypeSafe JavaScript client through a reusable
+   `TypeSafe("stepName", options)` primitive in `@taskwish/ai`, with TaskWish-style
+   `ModelNoul`, `ModelChoice`, and `ModelScore` builders. This preserves inferred
+   answer types while keeping provider plumbing out of individual templates.
 2. Adapt provider output through a `TypeSafe` actor. This follows TaskWish's
    service boundary and prevents vendor field names from spreading into the
    routing workflow.
