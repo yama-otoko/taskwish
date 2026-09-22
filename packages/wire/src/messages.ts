@@ -106,6 +106,7 @@ export type AcpSessionUpdateName =
   | "config_option_update"
   | "session_info_update"
   | "usage_update"
+  | "notice"
   | "compaction_update"
   | "compaction_summary_chunk";
 
@@ -261,6 +262,16 @@ export class AcpUsageUpdate extends Message<
   }
 }
 
+export class AcpNotice extends Message<
+  "ACP::Notice",
+  AcpSessionNotification<"notice">,
+  AcpMessageLog<"ACP::Notice">
+> {
+  constructor(data: AcpSessionNotification<"notice">) {
+    super("ACP::Notice", data, "~>");
+  }
+}
+
 export class AcpCompactionUpdate extends Message<
   "ACP::CompactionUpdate",
   AcpSessionNotification<"compaction_update">,
@@ -311,6 +322,7 @@ export type AcpSessionMessage =
   | AcpConfigOptionUpdate
   | AcpSessionInfoUpdate
   | AcpUsageUpdate
+  | AcpNotice
   | AcpCompactionUpdate
   | AcpCompactionSummaryChunk;
 
@@ -390,6 +402,10 @@ export function acpSessionUpdateMessage(
     case "usage_update":
       return new AcpUsageUpdate(
         notification as AcpSessionNotification<"usage_update">
+      );
+    case "notice":
+      return new AcpNotice(
+        notification as AcpSessionNotification<"notice">
       );
     case "compaction_update":
       return new AcpCompactionUpdate(

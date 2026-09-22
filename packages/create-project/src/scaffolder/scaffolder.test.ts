@@ -145,6 +145,13 @@ describe("Scaffolder.createProject", () => {
       ["Builder", "OpenBanking", "Slack", "RevenueMonitor"],
       "src/revenue-monitor/revenue-monitor.test.ts",
     ],
+    [
+      "agent-guardian",
+      "src/agent-guardian/review-agent-run.ts",
+      "reviewAgentRun",
+      ["TypeSafe", "AgentGuardian"],
+      "src/agent-guardian/agent-guardian.test.ts",
+    ],
   ] as const)(
     "creates the %s TypeScript template",
     async (template, actionPath, actorSource, actorNames, testPath) => {
@@ -200,7 +207,8 @@ describe("Scaffolder.createProject", () => {
         template === "cournot-competition" ||
         template === "equipment-diagnostician" ||
         template === "open-banking" ||
-        template === "revenue-monitor"
+        template === "revenue-monitor" ||
+        template === "agent-guardian"
           ? "bun test src"
           : "bun test"
       );
@@ -457,6 +465,24 @@ describe("Scaffolder.createProject", () => {
         expect(slackSource).toContain(
           'fetch("https://slack.com/api/chat.postMessage"'
         );
+      }
+      if (template === "agent-guardian") {
+        const guardianSource = await readFile(
+          join(destination, "src/agent-guardian/review-agent-run.ts"),
+          "utf8"
+        );
+        const typeSafeSource = await readFile(
+          join(destination, "src/typesafe/evaluate-agent-run.ts"),
+          "utf8"
+        );
+        expect(typeSafeSource).toContain("ModelNoul(");
+        expect(typeSafeSource).toContain("ModelChoice(");
+        expect(typeSafeSource).toContain("ModelScore(");
+        expect(typeSafeSource).toContain('TypeSafe("evaluateRun"');
+        expect(guardianSource).toContain(
+          "this.actions.typeSafe.evaluateAgentRun"
+        );
+        expect(guardianSource).toContain('"PAGE_ON_CALL"');
       }
       if (template === "software-factory") {
         const codingSource = await readFile(

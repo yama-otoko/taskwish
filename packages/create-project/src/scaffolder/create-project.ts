@@ -21,6 +21,7 @@ export const TEMPLATE_NAMES = [
   "equipment-diagnostician",
   "open-banking",
   "revenue-monitor",
+  "agent-guardian",
 ] as const;
 
 export type TemplateName = (typeof TEMPLATE_NAMES)[number];
@@ -98,7 +99,8 @@ export const { createProject } = actor()
         template !== "cournot-competition" &&
         template !== "equipment-diagnostician" &&
         template !== "open-banking" &&
-        template !== "revenue-monitor"
+        template !== "revenue-monitor" &&
+        template !== "agent-guardian"
       ) {
         throw new Error(
           `Unknown template "${template}". Choose ${TEMPLATE_NAMES.join(", ")}.`,
@@ -359,6 +361,12 @@ export const { createProject } = actor()
               label: "Revenue monitor",
               description:
                 "Open Banking revenue checks with symbolic forecasts and Slack alerts",
+            },
+            {
+              value: "agent-guardian",
+              label: "Agent guardian",
+              description:
+                "TypeSafe.ai judgments and confidence-gated review routing for agent runs",
             },
           ],
         },

@@ -15,6 +15,7 @@ export {
   AcpCompactionUpdate,
   AcpConfigOptionUpdate,
   AcpCurrentModeUpdate,
+  AcpNotice,
   AcpPlan,
   AcpPlanRemoved,
   AcpPlanUpdate,
