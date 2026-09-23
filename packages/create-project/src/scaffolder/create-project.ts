@@ -17,6 +17,7 @@ export const TEMPLATE_NAMES = [
   "document-extractor",
   "freight-operator",
   "options-analyst",
+  "ai-bubble-hedge",
   "cournot-competition",
   "equipment-diagnostician",
   "open-banking",
@@ -96,6 +97,7 @@ export const { createProject } = actor()
         template !== "document-extractor" &&
         template !== "freight-operator" &&
         template !== "options-analyst" &&
+        template !== "ai-bubble-hedge" &&
         template !== "cournot-competition" &&
         template !== "equipment-diagnostician" &&
         template !== "open-banking" &&
@@ -337,6 +339,12 @@ export const { createProject } = actor()
               label: "Options analyst",
               description:
                 "Symbolically verified option Greeks explained by OpenAI",
+            },
+            {
+              value: "ai-bubble-hedge",
+              label: "AI bubble hedge",
+              description:
+                "Polymarket and JEV evidence gated by symbolic put-risk rules",
             },
             {
               value: "cournot-competition",

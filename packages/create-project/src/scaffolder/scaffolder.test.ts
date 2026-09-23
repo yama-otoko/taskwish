@@ -118,6 +118,13 @@ describe("Scaffolder.createProject", () => {
       "src/options-analyst/options-analyst.test.ts",
     ],
     [
+      "ai-bubble-hedge",
+      "src/ai-bubble-hedge/evaluate-ai-bubble-hedge.ts",
+      "evaluateAiBubbleHedge",
+      ["Polymarket", "HedgeJudge", "PaperBroker", "AiBubbleHedge"],
+      "src/ai-bubble-hedge/ai-bubble-hedge.test.ts",
+    ],
+    [
       "cournot-competition",
       "src/cournot-competition/analyze-competition.ts",
       "analyzeCompetition",
@@ -204,6 +211,7 @@ describe("Scaffolder.createProject", () => {
         template === "document-extractor" ||
         template === "freight-operator" ||
         template === "options-analyst" ||
+        template === "ai-bubble-hedge" ||
         template === "cournot-competition" ||
         template === "equipment-diagnostician" ||
         template === "open-banking" ||
@@ -360,6 +368,39 @@ describe("Scaffolder.createProject", () => {
         expect(formulaSource).toContain('"greeksFormula"');
         expect(optionsSource).toContain("this.greeksFormula.solve(");
         expect(optionsSource).toContain("this.agent.generate(");
+      }
+      if (template === "ai-bubble-hedge") {
+        const hedgeSource = await readFile(
+          join(
+            destination,
+            "src/ai-bubble-hedge/evaluate-ai-bubble-hedge.ts"
+          ),
+          "utf8"
+        );
+        const policySource = await readFile(
+          join(destination, "src/ai-bubble-hedge/ai-bubble-hedge.ts"),
+          "utf8"
+        );
+        const polymarketSource = await readFile(
+          join(destination, "src/polymarket/get-ai-bubble-market.ts"),
+          "utf8"
+        );
+        const judgeSource = await readFile(
+          join(destination, "src/hedge-judge/evaluate-hedge-evidence.ts"),
+          "utf8"
+        );
+        const brokerSource = await readFile(
+          join(destination, "src/paper-broker/buy-put.ts"),
+          "utf8"
+        );
+        expect(packageJson.dependencies["@taskwish/symbolic"]).toBe(
+          `^${templateVersions["@taskwish/symbolic"]}`
+        );
+        expect(policySource).toContain('"hedgePolicy"');
+        expect(hedgeSource).toContain("this.hedgePolicy.solve(");
+        expect(judgeSource).toContain('TypeSafe("judge"');
+        expect(polymarketSource).toContain("gamma-api.polymarket.com");
+        expect(brokerSource).toContain('mode: "paper"');
       }
       if (template === "cournot-competition") {
         const actionSource = await readFile(
