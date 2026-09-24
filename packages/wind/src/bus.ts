@@ -1,15 +1,15 @@
 import { formatEvent } from "./format";
 import type { LogFn } from "./logger";
-import * as WireMessage from "./messages";
+import * as WindMessage from "./messages";
 
-type WireEventListener<Data = unknown> = (data: Data) => unknown;
+type WindEventListener<Data = unknown> = (data: Data) => unknown;
 
-const eventListeners: Record<string, WireEventListener[] | undefined> = {};
+const eventListeners: Record<string, WindEventListener[] | undefined> = {};
 
-export class WireEvents {
+export class WindEvents {
   addListener<const EventType extends string, Data>(
     type: EventType,
-    listener: WireEventListener<Data>
+    listener: WindEventListener<Data>
   ): this {
     addListener(type, listener);
 
@@ -18,14 +18,14 @@ export class WireEvents {
 
   on<const EventType extends string, Data>(
     type: EventType,
-    listener: WireEventListener<Data>
+    listener: WindEventListener<Data>
   ): this {
     return this.addListener(type, listener);
   }
 
   removeListener<const EventType extends string, Data>(
     type: EventType,
-    listener: WireEventListener<Data>
+    listener: WindEventListener<Data>
   ): this {
     removeListener(type, listener);
 
@@ -34,7 +34,7 @@ export class WireEvents {
 
   off<const EventType extends string, Data>(
     type: EventType,
-    listener: WireEventListener<Data>
+    listener: WindEventListener<Data>
   ): this {
     return this.removeListener(type, listener);
   }
@@ -47,11 +47,11 @@ export class WireEvents {
   }
 }
 
-export const events = new WireEvents();
+export const events = new WindEvents();
 
 export function addListener<const EventType extends string, Data>(
   type: EventType,
-  listener: WireEventListener<Data>
+  listener: WindEventListener<Data>
 ): void {
   let listeners = eventListeners[type];
 
@@ -60,12 +60,12 @@ export function addListener<const EventType extends string, Data>(
     eventListeners[type] = listeners;
   }
 
-  listeners[listeners.length] = listener as WireEventListener;
+  listeners[listeners.length] = listener as WindEventListener;
 }
 
 export function removeListener<const EventType extends string, Data>(
   type: EventType,
-  listener: WireEventListener<Data>
+  listener: WindEventListener<Data>
 ): void {
   const listeners = eventListeners[type];
 
@@ -98,24 +98,24 @@ export function emit<const EventType extends string, Data>(
   return true;
 }
 
-export type WireLogConfig = "console" | LogFn;
+export type WindLogConfig = "console" | LogFn;
 
-export type WireConfig = {
+export type WindConfig = {
   threadId?: string;
-  log?: WireLogConfig;
+  log?: WindLogConfig;
   services?: unknown[];
 };
 
-export type WireGlobalConfig = WireConfig;
+export type WindGlobalConfig = WindConfig;
 
 const ENCODING = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 const ULID_TIME_LENGTH = 10;
 const ULID_RANDOM_LENGTH = 16;
 
 let globalThreadId: string | undefined = undefined;
-let globalLog: WireLogConfig | undefined = undefined;
+let globalLog: WindLogConfig | undefined = undefined;
 
-export function configureWire(config: WireGlobalConfig): WireGlobalConfig {
+export function configureWind(config: WindGlobalConfig): WindGlobalConfig {
   for (const key in config) {
     if (key === "threadId") {
       globalThreadId = config[key];
@@ -124,10 +124,10 @@ export function configureWire(config: WireGlobalConfig): WireGlobalConfig {
     }
   }
 
-  return getWireConfig();
+  return getWindConfig();
 }
 
-export function getWireConfig(): WireGlobalConfig {
+export function getWindConfig(): WindGlobalConfig {
   return { threadId: globalThreadId, log: globalLog };
 }
 
@@ -135,11 +135,11 @@ export function ulid(now = Date.now()): string {
   return encodeTime(now, ULID_TIME_LENGTH) + encodeRandom(ULID_RANDOM_LENGTH);
 }
 
-export class Wire {
+export class Wind {
   declare readonly threadId: string;
-  declare readonly log: WireLogConfig | undefined;
+  declare readonly log: WindLogConfig | undefined;
 
-  constructor(config?: WireConfig) {
+  constructor(config?: WindConfig) {
     let threadId = globalThreadId;
     let log = globalLog;
 
@@ -203,30 +203,30 @@ export class Wire {
   }
 }
 
-export namespace Wire {
-  export import Message = WireMessage.Message;
-  export import Signal = WireMessage.Signal;
-  export import Trace = WireMessage.Trace;
-  export import Stream = WireMessage.Stream;
-  export import Result = WireMessage.Result;
-  export import StateChange = WireMessage.StateChange;
-  export import StateResult = WireMessage.StateResult;
-  export import AcpUserMessageChunk = WireMessage.AcpUserMessageChunk;
-  export import AcpAgentMessageChunk = WireMessage.AcpAgentMessageChunk;
-  export import AcpAgentThoughtChunk = WireMessage.AcpAgentThoughtChunk;
-  export import AcpToolCall = WireMessage.AcpToolCall;
-  export import AcpToolCallUpdate = WireMessage.AcpToolCallUpdate;
-  export import AcpPlan = WireMessage.AcpPlan;
-  export import AcpPlanUpdate = WireMessage.AcpPlanUpdate;
-  export import AcpPlanRemoved = WireMessage.AcpPlanRemoved;
-  export import AcpAvailableCommandsUpdate = WireMessage.AcpAvailableCommandsUpdate;
-  export import AcpCurrentModeUpdate = WireMessage.AcpCurrentModeUpdate;
-  export import AcpConfigOptionUpdate = WireMessage.AcpConfigOptionUpdate;
-  export import AcpSessionInfoUpdate = WireMessage.AcpSessionInfoUpdate;
-  export import AcpUsageUpdate = WireMessage.AcpUsageUpdate;
-  export import AcpCompactionUpdate = WireMessage.AcpCompactionUpdate;
-  export import AcpCompactionSummaryChunk = WireMessage.AcpCompactionSummaryChunk;
-  export import AcpStop = WireMessage.AcpStop;
+export namespace Wind {
+  export import Message = WindMessage.Message;
+  export import Signal = WindMessage.Signal;
+  export import Trace = WindMessage.Trace;
+  export import Stream = WindMessage.Stream;
+  export import Result = WindMessage.Result;
+  export import StateChange = WindMessage.StateChange;
+  export import StateResult = WindMessage.StateResult;
+  export import AcpUserMessageChunk = WindMessage.AcpUserMessageChunk;
+  export import AcpAgentMessageChunk = WindMessage.AcpAgentMessageChunk;
+  export import AcpAgentThoughtChunk = WindMessage.AcpAgentThoughtChunk;
+  export import AcpToolCall = WindMessage.AcpToolCall;
+  export import AcpToolCallUpdate = WindMessage.AcpToolCallUpdate;
+  export import AcpPlan = WindMessage.AcpPlan;
+  export import AcpPlanUpdate = WindMessage.AcpPlanUpdate;
+  export import AcpPlanRemoved = WindMessage.AcpPlanRemoved;
+  export import AcpAvailableCommandsUpdate = WindMessage.AcpAvailableCommandsUpdate;
+  export import AcpCurrentModeUpdate = WindMessage.AcpCurrentModeUpdate;
+  export import AcpConfigOptionUpdate = WindMessage.AcpConfigOptionUpdate;
+  export import AcpSessionInfoUpdate = WindMessage.AcpSessionInfoUpdate;
+  export import AcpUsageUpdate = WindMessage.AcpUsageUpdate;
+  export import AcpCompactionUpdate = WindMessage.AcpCompactionUpdate;
+  export import AcpCompactionSummaryChunk = WindMessage.AcpCompactionSummaryChunk;
+  export import AcpStop = WindMessage.AcpStop;
 }
 
 function encodeTime(now: number, length: number): string {

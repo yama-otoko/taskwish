@@ -1,6 +1,6 @@
 import { TW } from "@taskwish/core";
 import type { Output } from "ai";
-import { acpMessage } from "@taskwish/wire";
+import { acpMessage } from "@taskwish/wind";
 import {
   CodexAgent,
   type CodexAgentOptions,

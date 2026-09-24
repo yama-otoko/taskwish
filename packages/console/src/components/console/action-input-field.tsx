@@ -70,7 +70,7 @@ export function ActionInputField({
         Accept: "text/event-stream, application/json",
         Authorization: `Bearer ${config.apiKey}`,
         "Content-Type": "application/json",
-        wire: "commander",
+        wind: "commander",
       },
       signal: abortController.signal,
       body: JSON.stringify(suggestion.payload),

@@ -93,13 +93,13 @@ async function prepareStandaloneEntry(): Promise<void> {
   await Bun.$`bare create-taskwish-project`;
 
   const source = await readFile(bareAction, "utf8");
-  const wireImport = /import\s*\{[^}]*\}\s*from\s*["']@taskwish\/wire["'];/;
+  const windImport = /import\s*\{[^}]*\}\s*from\s*["']@taskwish\/wind["'];/;
 
-  if (!wireImport.test(source)) {
-    throw new Error(`Bare output did not contain the expected Wire import.`);
+  if (!windImport.test(source)) {
+    throw new Error(`Bare output did not contain the expected Wind import.`);
   }
 
-  const staticWire = `class Wire {
+  const staticWind = `class Wind {
   trace(_path: string, _data: unknown): void {}
 }`;
   const embeddedTemplateFiles = await readTemplateFiles(templatesDirectory);
@@ -108,7 +108,7 @@ async function prepareStandaloneEntry(): Promise<void> {
     "utf8",
   );
   const standaloneSource = replaceEmbeddedAssets(
-    source.replace(wireImport, staticWire),
+    source.replace(windImport, staticWind),
     embeddedTemplateFiles,
     embeddedSkill,
   );

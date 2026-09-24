@@ -132,7 +132,7 @@ Terminal.elicit(Scaffolder.createProject, {
 
   test("converts a TaskWish actor step chain to traced runners and service helpers", () => {
     const source = `import { Actor, Step } from "../../src";
-import { Logger } from "@taskwish/wire";
+import { Logger } from "@taskwish/wind";
 
 const { actor } = Actor("MyActor");
 
@@ -154,17 +154,17 @@ export const { runSteps } = actor()
 export const { MyActor } = actor().service({ runSteps });
 `;
     expectParts(morph(source), [
-      `import { Logger, Wire } from "@taskwish/wire";`,
+      `import { Logger, Wind } from "@taskwish/wind";`,
       `interface RunStepsAction`,
-      `type RunStepsScope = { wire: Wire };`,
-      `type RunStepsScopePatch = { wire?: Wire };`,
+      `type RunStepsScope = { wind: Wind };`,
+      `type RunStepsScopePatch = { wind?: Wind };`,
       `export const runSteps = async function runSteps(input: { message: string; })`,
       `runSteps.run = runStepsCtx().run;`,
       `runSteps.stream = runStepsCtx().stream;`,
       `function runStepsCtx(ctx: RunStepsScopePatch = {})`,
-      `const initialScope: RunStepsScope = { wire };
+      `const initialScope: RunStepsScope = { wind };
   const scope: RunStepsScope = initialScope;
-  if (ctx.wire !== undefined) scope.wire = ctx.wire;`,
+  if (ctx.wind !== undefined) scope.wind = ctx.wind;`,
       `const firstStep = "step 1";`,
       `const lastStep = firstStep.length;`,
       `export const MyActor = {
@@ -262,13 +262,13 @@ export const { Greeter } = actor().service({
     const output = morph(source);
 
     expectParts(output, [
-      `import { Wire, addListener } from "@taskwish/wire";`,
+      `import { Wind, addListener } from "@taskwish/wind";`,
       `interface HelloAction`,
       `export const hello = async function hello()`,
       `interface OnNewEmailAction`,
       `export const onNewEmail = async function onNewEmail()`,
-      `scope.wire.trace("Greeter::hello", { input });`,
-      `scope.wire.trace("Greeter::onNewEmail", { input });`,
+      `scope.wind.trace("Greeter::hello", { input });`,
+      `scope.wind.trace("Greeter::onNewEmail", { input });`,
       `addListener("Greeter::NewEmail", onNewEmail);`,
       `export const Greeter = {
   hello
@@ -307,7 +307,7 @@ export const { runSteps } = actor()
       `firstStepBlock: {`,
       `firstStep = "empty";
         break firstStepBlock;`,
-      `scope.wire.trace("MyActor::runSteps.firstStep", { result: firstStep });`,
+      `scope.wind.trace("MyActor::runSteps.firstStep", { result: firstStep });`,
       `const lastStep = firstStep.length;`,
     ]);
   });
@@ -340,7 +340,7 @@ export const { runSteps } = actor()
       `const normalized = input.message.trim();`,
       `const upper = normalized.toUpperCase();`,
       `firstStep = upper;`,
-      `scope.wire.trace("MyActor::runSteps.firstStep", { result: firstStep });`,
+      `scope.wind.trace("MyActor::runSteps.firstStep", { result: firstStep });`,
     ]);
   });
 
@@ -432,7 +432,7 @@ main();
 `;
 
     expectParts(morph(source), [
-      `scope.wire.trace("MyActor::runSteps", { result: firstStep });`,
+      `scope.wind.trace("MyActor::runSteps", { result: firstStep });`,
       `const main = async () => {
   const result = await runSteps({ message: "hello" });
 
@@ -491,12 +491,12 @@ export const { runSteps } = actor()
 `;
 
     expectParts(morph(source), [
-      `import { Wire } from "@taskwish/wire";`,
+      `import { Wind } from "@taskwish/wind";`,
       `function runStepsCtx(ctx: RunStepsScopePatch = {})`,
-      `const wire = new Wire();`,
-      `const initialScope: RunStepsScope = { wire, abortSignal: undefined as AbortSignal | undefined };
+      `const wind = new Wind();`,
+      `const initialScope: RunStepsScope = { wind, abortSignal: undefined as AbortSignal | undefined };
   const scope: RunStepsScope = initialScope;
-  if (ctx.wire !== undefined) scope.wire = ctx.wire;
+  if (ctx.wind !== undefined) scope.wind = ctx.wind;
   if (ctx.abortSignal !== undefined) scope.abortSignal = ctx.abortSignal;`,
       `async function run(input: { name: string; }) {
     return stream(input);
@@ -526,12 +526,12 @@ export const { runSteps } = actor()
 `;
 
     expectParts(morph(source), [
-      `import { Wire } from "@taskwish/wire";`,
+      `import { Wind } from "@taskwish/wind";`,
       `import { Browser } from "./browser";`,
       `function runStepsCtx(ctx: RunStepsScopePatch = {})`,
-      `const initialScope: RunStepsScope = { wire, actions: { browser: { browse: Browser.browse } } };
+      `const initialScope: RunStepsScope = { wind, actions: { browser: { browse: Browser.browse } } };
   const scope: RunStepsScope = initialScope;
-  if (ctx.wire !== undefined) scope.wire = ctx.wire;
+  if (ctx.wind !== undefined) scope.wind = ctx.wind;
   if (ctx.actions !== undefined) {
     if (ctx.actions.browser !== undefined) {
       if (ctx.actions.browser.browse !== undefined) scope.actions.browser.browse = ctx.actions.browser.browse;
@@ -567,9 +567,9 @@ export const { runSteps } = actor()
 
     expectParts(morph(source), [
       `function runStepsCtx(ctx: RunStepsScopePatch = {})`,
-      `const initialScope: RunStepsScope = { wire, actions: { browser: { browse: Browser.browse, close: Browser.close } } };
+      `const initialScope: RunStepsScope = { wind, actions: { browser: { browse: Browser.browse, close: Browser.close } } };
   const scope: RunStepsScope = initialScope;
-  if (ctx.wire !== undefined) scope.wire = ctx.wire;
+  if (ctx.wind !== undefined) scope.wind = ctx.wind;
   if (ctx.actions !== undefined) {
     if (ctx.actions.browser !== undefined) {
       if (ctx.actions.browser.browse !== undefined) scope.actions.browser.browse = ctx.actions.browser.browse;
@@ -601,11 +601,11 @@ export const { runSteps } = actor()
     expectParts(morph(source), [
       `input: { name: string; tags: string[]; age?: number | undefined; }`,
       `const firstStep = input.tags.length;`,
-      `scope.wire.trace("MyActor::runSteps.firstStep", { result: firstStep });`,
+      `scope.wind.trace("MyActor::runSteps.firstStep", { result: firstStep });`,
     ]);
   });
 
-  test("rewrites signals to the wire event bus", () => {
+  test("rewrites signals to the wind event bus", () => {
     const source = `import { Actor, Step } from "../../src";
 
 const { actor } = Actor("Greeter");
@@ -625,7 +625,7 @@ export const { hello } = actor()
     const output = morph(source);
 
     expect(output).toContain(
-      `const notify = scope.wire.signal("Greeter::Message", { name: input.name }) as Record<string, unknown>;`
+      `const notify = scope.wind.signal("Greeter::Message", { name: input.name }) as Record<string, unknown>;`
     );
     expect(output).not.toContain(`const signal =`);
   });
@@ -781,7 +781,7 @@ export const { Greeter } = actor().service({ hello });
       output.startsWith(
         `"use server";
 
-import { Wire } from "@taskwish/wire";`
+import { Wind } from "@taskwish/wind";`
       )
     ).toBe(true);
     expect(indexOutput).toContain("export { hello };");
@@ -872,7 +872,7 @@ export const { Biller } = actor().service({ onGreeterMessage });
     );
     expect(output).toContain(`input: { name: string; }`);
     expect(output).toContain(
-      `import { Wire, addListener } from "@taskwish/wire";`
+      `import { Wind, addListener } from "@taskwish/wind";`
     );
     expect(output).toContain(
       `addListener("Greeter::Message", onGreeterMessage);`

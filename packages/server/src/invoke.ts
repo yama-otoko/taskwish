@@ -11,7 +11,7 @@ import {
   StateResult,
   Stream,
   Trace,
-} from "@taskwish/wire";
+} from "@taskwish/wind";
 import {
   flattenRouteInput,
   parseActionInput,
@@ -21,7 +21,7 @@ import { responseFrom, streamChunk } from "./response";
 import type { Action, NodeRegistry, RouteMeta } from "./types";
 
 type InvokeOptions = {
-  includeWire: boolean;
+  includeWind: boolean;
   responseMode: "default" | "sse";
 };
 
@@ -88,8 +88,8 @@ function acceptsServerSentEvents(request: Request): boolean {
   );
 }
 
-function includesWireEvents(request: Request): boolean {
-  const value = request.headers.get("wire");
+function includesWindEvents(request: Request): boolean {
+  const value = request.headers.get("wind");
   if (value === null) return false;
 
   const normalized = value.trim().toLowerCase();
@@ -100,7 +100,7 @@ function includesWireEvents(request: Request): boolean {
 
 function invokeOptionsFromRequest(request: Request): InvokeOptions {
   return {
-    includeWire: includesWireEvents(request),
+    includeWind: includesWindEvents(request),
     responseMode: acceptsServerSentEvents(request) ? "sse" : "default",
   };
 }
@@ -178,12 +178,12 @@ function responseFromActionSseStream(
               return;
             } else if (item.value instanceof Signal) {
               dispatchSignal(item.value, registry);
-              if (options.includeWire) {
+              if (options.includeWind) {
                 controller.enqueue(item.value.toSSE());
                 return;
               }
             } else if (item.value instanceof Trace) {
-              if (options.includeWire) {
+              if (options.includeWind) {
                 controller.enqueue(item.value.toSSE());
                 return;
               }
@@ -191,7 +191,7 @@ function responseFromActionSseStream(
               controller.enqueue(item.value.toSSE());
               return;
             } else if (item.value instanceof Message) {
-              if (options.includeWire) {
+              if (options.includeWind) {
                 controller.enqueue(item.value.toSSE());
                 return;
               }

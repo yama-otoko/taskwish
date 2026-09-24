@@ -201,7 +201,7 @@ export const ActionForm = forwardRef<
           Accept: "text/event-stream, application/json",
           Authorization: `Bearer ${config.apiKey}`,
           "Content-Type": "application/json",
-          wire: "commander",
+          wind: "commander",
         },
         signal: options.signal,
         body: JSON.stringify(payload),

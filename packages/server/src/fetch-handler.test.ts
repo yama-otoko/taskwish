@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Actor, Event, Step, TW } from "@taskwish/core";
 import { State, Store } from "@taskwish/state";
-import { Logger, formatEvent } from "@taskwish/wire";
+import { Logger, formatEvent } from "@taskwish/wind";
 import { createFetchHandler, createNodeRegistry } from "./index";
 import { apiKey, auth } from "./test-helpers";
 
@@ -137,7 +137,7 @@ test("streams Step pipe chunks from command actions", async () => {
   expect(await reader.read()).toEqual({ done: true, value: undefined });
 });
 
-test("streams command yields and wire traces as SSE for commander requests", async () => {
+test("streams command yields and wind traces as SSE for commander requests", async () => {
   const { actor } = Actor("Piper");
 
   const { count } = actor()
@@ -170,7 +170,7 @@ test("streams command yields and wire traces as SSE for commander requests", asy
       headers: {
         ...auth,
         Accept: "text/event-stream",
-        wire: "commander",
+        wind: "commander",
       },
     })
   );
@@ -221,7 +221,7 @@ test("streams state results and state changes as dedicated SSE events", async ()
           ...auth,
           Accept: "text/event-stream",
           "Content-Type": "application/json",
-          wire: "commander",
+          wind: "commander",
         },
         body: JSON.stringify({ id: "one" }),
       })
@@ -241,7 +241,7 @@ test("streams state results and state changes as dedicated SSE events", async ()
   }
 });
 
-test("streams wire trace error messages as SSE for commander requests", async () => {
+test("streams wind trace error messages as SSE for commander requests", async () => {
   const { actor } = Actor("Crasher");
   const boom = new Error("boom");
 
@@ -265,7 +265,7 @@ test("streams wire trace error messages as SSE for commander requests", async ()
       headers: {
         ...auth,
         Accept: "text/event-stream",
-        wire: "commander",
+        wind: "commander",
       },
     })
   );

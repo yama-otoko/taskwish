@@ -10,7 +10,7 @@ import { join, resolve } from "node:path";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { scope, type } from "arktype";
 import { TW } from "@taskwish/core";
-import { Wire } from "@taskwish/wire";
+import { Wind } from "@taskwish/wind";
 
 type InferSchema<Schema, Scope = {}> = Schema extends StandardSchemaV1<
   infer Input
@@ -599,7 +599,7 @@ function createStateInstance(
 
         return stateChangesSince(snapshot).map(
           (change) =>
-            new Wire.StateChange(
+            new Wind.StateChange(
               [actor, change.path].filter(Boolean).join("::"),
               Object.fromEntries(
                 Object.entries(change).filter(([key]) => key !== "path")
