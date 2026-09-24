@@ -21,7 +21,7 @@ export function printAction(
   const usesAbortSignal = action.steps.some((step) => step.usesAbortSignal);
   const returnTypeText = action.steps.at(-1)!.propertyType;
   const scopeTypeProperties = [
-    `wire: Wire`,
+    `wind: Wind`,
     usesAbortSignal ? `abortSignal: AbortSignal | undefined` : null,
     action.actionDependencies.length > 0
       ? `actions: { ${action.actionDependencies
@@ -30,7 +30,7 @@ export function printAction(
       : null,
   ].filter((property): property is string => property !== null);
   const initialScopeProperties = [
-    `wire`,
+    `wind`,
     usesAbortSignal ? `abortSignal: undefined as AbortSignal | undefined` : null,
     action.actionDependencies.length > 0
       ? `actions: { ${action.actionDependencies
@@ -70,7 +70,7 @@ export function printAction(
         ]),
     ``,
     `function ${ctxName}(ctx: ${scopePatchTypeName} = {}) {`,
-    `  const wire = new Wire();`,
+    `  const wind = new Wind();`,
     `  const initialScope: ${scopeTypeName} = ${initialScopeText};`,
     `  const ${scopeReferenceName}: ${scopeTypeName} = initialScope;`,
     ...printScopePatchLines(action, scopeReferenceName),
@@ -87,7 +87,7 @@ export function printAction(
         ]
       : []),
     ``,
-    `    scope.wire.trace("${actionEventName}", { input });`,
+    `    scope.wind.trace("${actionEventName}", { input });`,
     ``,
   ].filter((line): line is string => line !== null);
 
@@ -109,14 +109,14 @@ export function printAction(
     }
     lines.push("");
     lines.push(
-      `    scope.wire.trace("${actionEventName}.${step.name}", { result: ${step.name} });`
+      `    scope.wind.trace("${actionEventName}.${step.name}", { result: ${step.name} });`
     );
     lines.push("");
   }
 
   const lastStep = action.steps.at(-1)!;
   lines.push(
-    `    scope.wire.trace("${actionEventName}", { result: ${lastStep.name} });`
+    `    scope.wind.trace("${actionEventName}", { result: ${lastStep.name} });`
   );
   lines.push("");
   lines.push(`    return ${lastStep.name};`);
@@ -161,7 +161,7 @@ function printActionDependencyType(
 
 function printScopePatchTypeProperties(action: ActionSpec): string[] {
   const properties = [
-    `wire?: Wire`,
+    `wind?: Wind`,
     action.steps.some((step) => step.usesAbortSignal)
       ? `abortSignal?: AbortSignal | undefined`
       : null,
@@ -188,7 +188,7 @@ function printScopePatchLines(
   scopeReferenceName: string,
 ): string[] {
   const lines = [
-    `  if (ctx.wire !== undefined) ${scopeReferenceName}.wire = ctx.wire;`,
+    `  if (ctx.wind !== undefined) ${scopeReferenceName}.wind = ctx.wind;`,
   ];
 
   if (action.steps.some((step) => step.usesAbortSignal)) {

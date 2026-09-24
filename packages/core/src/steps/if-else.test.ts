@@ -6,7 +6,7 @@ import { Action } from "../action";
 import { Step } from "./step";
 import { If, Else, ElseIf, Cond } from "./if-else";
 import { Loop, ForEach } from "./loop";
-import { messageLogData } from "@taskwish/wire";
+import { messageLogData } from "@taskwish/wind";
 
 const eventDataList = (values: unknown[]) => values.map(messageLogData);
 

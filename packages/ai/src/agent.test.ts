@@ -8,7 +8,7 @@ import {
   AcpToolCallUpdate,
   AcpUsageUpdate,
   AcpUserMessageChunk,
-} from "@taskwish/wire";
+} from "@taskwish/wind";
 import { Output, jsonSchema } from "ai";
 import { MockLanguageModelV3 } from "ai/test";
 
@@ -176,7 +176,7 @@ describe("Agent AI SDK runtime", () => {
     );
   });
 
-  test("emits ACP wire messages from AI SDK generate calls", async () => {
+  test("emits ACP wind messages from AI SDK generate calls", async () => {
     let releaseTool: ((value: string) => void) | undefined;
     const model = new MockLanguageModelV3({
       doStream: [

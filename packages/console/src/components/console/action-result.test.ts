@@ -52,7 +52,7 @@ describe("action input formatting", () => {
 });
 
 describe("signal trace formatting", () => {
-  test("uses the wire signal marker and unwraps protocol data", () => {
+  test("uses the wind signal marker and unwraps protocol data", () => {
     expect(
       signalPayloadLine({
         "->": "Greeter::Message",

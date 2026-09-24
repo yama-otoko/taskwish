@@ -4,7 +4,7 @@ import { formatEvent } from "./format";
 import { Type } from "./symbols";
 
 export type LogFn = (event: Record<string, unknown>) => void;
-export type WireLogEvent = TraceType | Record<string, unknown>;
+export type WindLogEvent = TraceType | Record<string, unknown>;
 export type DispatchFn = (event: unknown) => void;
 
 export type ConsoleLike = Pick<typeof console, "log" | "info" | "error">;

@@ -14,7 +14,7 @@ import {
   type AcpSessionMessage,
   type AcpSessionNotification,
   type AcpSessionUpdate,
-} from "@taskwish/wire";
+} from "@taskwish/wind";
 
 import { ToolDefinition, type TaskWishTool } from "./tool";
 
@@ -37,8 +37,8 @@ export type AiSdkChatThread = {
   sessionId: string;
 };
 
-export type AiSdkWireMessage = AcpSessionMessage | AcpStop;
-export type AiSdkWireObserver = (message: AiSdkWireMessage) => void;
+export type AiSdkWindMessage = AcpSessionMessage | AcpStop;
+export type AiSdkWindObserver = (message: AiSdkWindMessage) => void;
 
 type GeneratedOutput<OUTPUT> = OUTPUT extends Output.Output<infer Value>
   ? Value
@@ -55,7 +55,7 @@ export class AiSdkAgent<OUTPUT extends Output.Output = Output.Output> {
   constructor(
     options: AiSdkAgentOptions<OUTPUT>,
     tools: Record<string, TaskWishTool> = {},
-    private readonly onWireMessage?: AiSdkWireObserver
+    private readonly onWindMessage?: AiSdkWindObserver
   ) {
     const {
       runtime: _runtime,
@@ -286,13 +286,13 @@ export class AiSdkAgent<OUTPUT extends Output.Output = Output.Output> {
   }
 
   private publishUpdate(sessionId: string, update: AcpSessionUpdate): void {
-    this.onWireMessage?.(
+    this.onWindMessage?.(
       acpSessionUpdateMessage({ sessionId, update } as AcpSessionNotification)
     );
   }
 
   private publishStop(sessionId: string, stopReason: string): void {
-    this.onWireMessage?.(new AcpStop({ response: { sessionId }, stopReason }));
+    this.onWindMessage?.(new AcpStop({ response: { sessionId }, stopReason }));
   }
 
   async close(): Promise<void> {

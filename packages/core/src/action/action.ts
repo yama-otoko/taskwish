@@ -24,8 +24,8 @@ import {
   type LoggerConfig,
   Signal,
   Trace,
-  Wire,
-} from "@taskwish/wire";
+  Wind,
+} from "@taskwish/wind";
 import { type InferTypeConfig } from "../use";
 import { $ as expressionRoot } from "@taskwish/expr";
 import {
@@ -413,8 +413,8 @@ export const RawStreamTag = Symbol.for("TW.RawStream");
 export const RawLoggedStreamTag = Symbol.for("TW.RawLoggedStream");
 export const ContextualActionTag = Symbol.for("TW.ContextualAction");
 
-function isWireStream(value: unknown): value is Wire.Stream<unknown> {
-  return value instanceof Wire.Stream;
+function isWindStream(value: unknown): value is Wind.Stream<unknown> {
+  return value instanceof Wind.Stream;
 }
 
 export async function* tapWith(
@@ -436,7 +436,7 @@ export async function* tapRawStreamWith(
 ): AsyncGenerator<unknown, unknown> {
   let next = await gen.next();
   while (!next.done) {
-    log(isWireStream(next.value) ? next.value.data : next.value);
+    log(isWindStream(next.value) ? next.value.data : next.value);
     yield next.value;
     next = await gen.next();
   }
@@ -452,7 +452,7 @@ export async function* unwrapStreamEvents(
     const next = await gen.next(sent);
     if (next.done) return next.value;
 
-    const value = isWireStream(next.value) ? next.value.data : next.value;
+    const value = isWindStream(next.value) ? next.value.data : next.value;
     sent = yield value;
   }
 }
@@ -667,8 +667,8 @@ async function* transformUserEvents(
       const value =
         streamChunks &&
         !(next.value instanceof Signal) &&
-        !(next.value instanceof Wire.Stream)
-          ? new Wire.Stream(next.value)
+        !(next.value instanceof Wind.Stream)
+          ? new Wind.Stream(next.value)
           : next.value;
       sent = yield value;
     }

@@ -273,7 +273,7 @@ function parseSseData(value: string): unknown {
   }
 }
 
-function wireLogData(eventType: string, value: unknown): unknown {
+function windLogData(eventType: string, value: unknown): unknown {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return value;
   }
@@ -319,8 +319,8 @@ function parseSseMessage(message: string): ActionRunEvent | null {
   if (!data.length) return null;
   const normalizedType: Record<string, string> = {
     "TW::Stream": "yield",
-    "TW::Trace": "wire",
-    "TW::Signal": "wire",
+    "TW::Trace": "wind",
+    "TW::Signal": "wind",
     "TW::StateChange": "state-change",
     "TW::StateResult": "state",
     "TW::Result": "result",
@@ -330,7 +330,7 @@ function parseSseMessage(message: string): ActionRunEvent | null {
 
   return {
     type: acpMessage ? "acp" : normalizedType[eventType] ?? eventType,
-    data: wireLogData(eventType, parseSseData(data.join("\n"))),
+    data: windLogData(eventType, parseSseData(data.join("\n"))),
     ...(acpMessage ? { message: acpMessage } : {}),
   };
 }
@@ -462,7 +462,7 @@ export function formatActionRunEvents(events: ActionRunEvent[]): string {
     }
 
     if (output && !output.endsWith("\n")) output += "\n";
-    const label = event.type === "wire" ? "wire" : event.type;
+    const label = event.type === "wind" ? "wind" : event.type;
     const data =
       typeof event.data === "string"
         ? event.data

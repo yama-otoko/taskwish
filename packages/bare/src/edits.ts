@@ -16,24 +16,24 @@ export function applyBareMetalReplacements(
   if (actions.length > 0) {
     const importLines: string[] = [];
     const requiredImports = [
-      "Wire",
+      "Wind",
       actions.some((action) => action.listenEventName !== null)
         ? "addListener"
         : null,
     ].filter((value): value is string => value !== null);
-    const wireImport = sourceFile
+    const windImport = sourceFile
       .getImportDeclarations()
       .find(
         (importDeclaration) =>
-          importDeclaration.getModuleSpecifierValue() === "@taskwish/wire"
+          importDeclaration.getModuleSpecifierValue() === "@taskwish/wind"
       );
 
-    if (!wireImport) {
+    if (!windImport) {
       importLines.push(
-        `import { ${requiredImports.join(", ")} } from "@taskwish/wire";`
+        `import { ${requiredImports.join(", ")} } from "@taskwish/wind";`
       );
     } else {
-      const namedImports = wireImport.getNamedImports();
+      const namedImports = windImport.getNamedImports();
       const existingNames = new Set(
         namedImports.map((namedImport) => namedImport.getName())
       );
@@ -52,7 +52,7 @@ export function applyBareMetalReplacements(
         });
       } else if (missingImports.length > 0) {
         importLines.push(
-          `import { ${missingImports.join(", ")} } from "@taskwish/wire";`
+          `import { ${missingImports.join(", ")} } from "@taskwish/wind";`
         );
       }
     }

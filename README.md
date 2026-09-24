@@ -122,7 +122,7 @@ This repository is a Bun workspace managed with Turborepo.
 | [`@taskwish/console`](packages/console) | Interactive web Console |
 | [`@taskwish/create-project`](packages/create-project) | Project scaffolder and starter templates |
 | [`@taskwish/terminal`](packages/terminal) | Metadata-driven terminal interface |
-| [`@taskwish/wire`](packages/wire) | Runtime messages, tracing, and logging |
+| [`@taskwish/wind`](packages/wind) | Runtime messages, tracing, and logging |
 
 Install dependencies and build every workspace:
 

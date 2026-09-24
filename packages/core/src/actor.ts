@@ -41,7 +41,7 @@ import {
   Signal,
   type ConsoleLike,
   type LoggerConfig,
-} from "@taskwish/wire";
+} from "@taskwish/wind";
 import { type Steps } from "./steps/steps";
 import { ResultKind } from "./steps/hkt";
 

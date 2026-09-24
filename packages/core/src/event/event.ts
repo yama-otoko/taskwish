@@ -9,7 +9,7 @@ import {
   QualifiedEventName,
 } from "../helpers";
 import { TW } from "../core";
-import { Signal } from "@taskwish/wire";
+import { Signal } from "@taskwish/wind";
 
 type ArgTwoOperator = "[]" | "&" | "|" | "|>" | ":" | "=>" | "@";
 type IndexZeroOperator = "keyof" | "instanceof" | "===";
