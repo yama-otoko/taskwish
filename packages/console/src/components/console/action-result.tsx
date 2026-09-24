@@ -21,6 +21,11 @@ import {
   MessageResponse,
 } from "../ai-elements/message";
 import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from "../ai-elements/reasoning";
+import {
   streamActionResponse,
   formatActionResultBody,
   type ActionRunEvent,
@@ -1681,6 +1686,19 @@ export function ActionResult({
                           <MessageResponse>{bubble.body}</MessageResponse>
                         </div>
                       </Message>
+                    ) : bubble.type === "thought" ? (
+                      <Message key={`${run.id}-${bubble.id}`} from="assistant">
+                        <Reasoning
+                          className="mb-0 max-w-[88%]"
+                          defaultOpen={false}
+                          isStreaming={waiting}
+                        >
+                          <ReasoningTrigger className="w-auto text-[11px] font-semibold" />
+                          <ReasoningContent className="mt-2 border-l-[1.5px] border-border px-4 py-3">
+                            {bubble.body}
+                          </ReasoningContent>
+                        </Reasoning>
+                      </Message>
                     ) : (
                       <Message
                         key={`${run.id}-${bubble.id}`}
@@ -1700,8 +1718,7 @@ export function ActionResult({
                           >
                             {bubble.type === "wire"
                               ? bubble.title
-                              : bubble.type === "thought" ||
-                                bubble.type === "tool" ||
+                              : bubble.type === "tool" ||
                                 bubble.type === "plan" ||
                                 bubble.type === "activity"
                               ? bubble.title
@@ -1722,8 +1739,7 @@ export function ActionResult({
                           className={cn(
                             bubble.type === "wire" &&
                               "border-l-[1.5px] border-border px-4 py-3 text-muted-foreground",
-                            (bubble.type === "thought" ||
-                              bubble.type === "activity") &&
+                            bubble.type === "activity" &&
                               "border-l-[1.5px] border-border px-4 py-3 text-muted-foreground",
                             (bubble.type === "tool" ||
                               bubble.type === "plan") &&
