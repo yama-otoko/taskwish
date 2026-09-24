@@ -14,7 +14,7 @@ import {
   Trace,
   formatEvent,
   messageLogData,
-} from "@taskwish/wire";
+} from "@taskwish/wind";
 import { Event } from "../event";
 
 const eventDataList = (values: unknown[]) => values.map(messageLogData);

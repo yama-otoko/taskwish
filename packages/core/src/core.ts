@@ -12,7 +12,7 @@ import {
 } from "./helpers";
 
 import { Type as ArkType } from "arktype";
-import type { Signal, Trace } from "@taskwish/wire";
+import type { Signal, Trace } from "@taskwish/wind";
 
 export namespace TW {
   export const Name = Symbol.for("TW.Name");

@@ -91,7 +91,7 @@ export class Stream<const Data> extends Message<"TW::Stream", Data> {
   }
 }
 
-/** ACP session-update discriminators supported by the wire protocol. */
+/** ACP session-update discriminators supported by the wind protocol. */
 export type AcpSessionUpdateName =
   | "user_message_chunk"
   | "agent_message_chunk"
@@ -111,7 +111,7 @@ export type AcpSessionUpdateName =
   | "compaction_summary_chunk";
 
 /**
- * Structural ACP notification types keep `@taskwish/wire` independent of a
+ * Structural ACP notification types keep `@taskwish/wind` independent of a
  * particular ACP SDK release while preserving the concrete payload passed to
  * each message constructor.
  */
@@ -334,7 +334,7 @@ export type AcpActiveSessionMessage =
     }
   | ({ kind: "stop" } & AcpStopData);
 
-/** Converts every ACP active-session event into its dedicated wire message. */
+/** Converts every ACP active-session event into its dedicated wind message. */
 export function acpMessage(
   message: AcpActiveSessionMessage
 ): AcpSessionMessage | AcpStop {
@@ -348,7 +348,7 @@ export function acpMessage(
   return acpSessionUpdateMessage(message.notification);
 }
 
-/** Converts every ACP `session/update` variant into a dedicated wire message. */
+/** Converts every ACP `session/update` variant into a dedicated wind message. */
 export function acpSessionUpdateMessage(
   notification: AcpSessionNotification
 ): AcpSessionMessage {

@@ -4,7 +4,7 @@ import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { basename, dirname, join, relative, resolve } from "node:path";
 
 import { Step } from "taskwish";
-import { Logger } from "@taskwish/wire";
+import { Logger } from "@taskwish/wind";
 
 import { actor } from "./scaffolder";
 

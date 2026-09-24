@@ -1,10 +1,10 @@
 {
-  "name": "@taskwish/wire",
+  "name": "@taskwish/wind",
   "publishConfig": {
     "access": "public"
   },
   "version": "0.0.1",
-  "description": "Shared TaskWish runtime event wire",
+  "description": "Shared TaskWish runtime event wind",
   "license": "Elastic-2.0",
   "exports": {
     ".": {

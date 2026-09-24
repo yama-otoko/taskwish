@@ -100,7 +100,7 @@ describe("command response streams", () => {
 
     expect(result?.events).toEqual([
       {
-        type: "wire",
+        type: "wind",
         data: { ">>": "Greeter::hello", input: { name: "Ada" } },
       },
     ]);
@@ -113,7 +113,7 @@ describe("command response streams", () => {
 
     expect(result?.events).toEqual([
       {
-        type: "wire",
+        type: "wind",
         data: { "->": "Greeter::Message", data: { name: "Ada" } },
       },
     ]);

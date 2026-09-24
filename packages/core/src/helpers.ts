@@ -2,7 +2,7 @@ import { Type, type } from "arktype";
 import { StandardSchemaV1 } from "@standard-schema/spec";
 import type { TW } from "./core";
 import type { InferTypeConfig } from "./use";
-import type { Signal, Trace } from "@taskwish/wire";
+import type { Signal, Trace } from "@taskwish/wind";
 
 /** Walk the plugins tuple and return the filter type from the first InferTypeConfig found.
  *  - `never`     → no InferType plugin present

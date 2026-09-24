@@ -5,7 +5,7 @@
     "paths": {
       "@taskwish/core": ["../core/src/index.ts"],
       "@taskwish/expr": ["../expr/src/index.ts"],
-      "@taskwish/wire": ["../wire/src/index.ts"]
+      "@taskwish/wind": ["../wind/src/index.ts"]
     },
     "types": ["bun"]
   },

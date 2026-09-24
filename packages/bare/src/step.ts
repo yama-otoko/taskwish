@@ -193,7 +193,7 @@ function rewriteThisPropertyAccesses(root: Node, owner: Node): void {
       propertyAccess.getName() === "actions"
         ? `scope.${propertyAccess.getName()}`
         : propertyAccess.getName() === "signal"
-        ? "scope.wire.signal"
+        ? "scope.wind.signal"
         : propertyAccess.getName()
     );
   }

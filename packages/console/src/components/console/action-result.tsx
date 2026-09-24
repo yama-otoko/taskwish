@@ -57,7 +57,7 @@ type RunBubble = {
     | "tool"
     | "plan"
     | "activity"
-    | "wire"
+    | "wind"
     | "result"
     | "error"
     | "state"
@@ -102,9 +102,9 @@ function ScrollToAppendedStateActions({ count }: { count: number }) {
   return null;
 }
 
-const WIRE_TITLE_KEY = ">>";
-const WIRE_SIGNAL_KEY = "->";
-const WIRE_SESSION_KEY = "sessionId";
+const WIND_TITLE_KEY = ">>";
+const WIND_SIGNAL_KEY = "->";
+const WIND_SESSION_KEY = "sessionId";
 
 type TraceTreeNode = {
   name: string;
@@ -259,13 +259,13 @@ function isEmptyTraceValue(value: unknown): boolean {
   );
 }
 
-function wireLogBody(event: ActionRunEvent): string {
+function windLogBody(event: ActionRunEvent): string {
   if (event.data === null || typeof event.data !== "object") {
     return eventBody(event.data);
   }
 
-  if (!Array.isArray(event.data) && WIRE_TITLE_KEY in event.data) {
-    const { [WIRE_TITLE_KEY]: _title, ...body } = event.data as Record<
+  if (!Array.isArray(event.data) && WIND_TITLE_KEY in event.data) {
+    const { [WIND_TITLE_KEY]: _title, ...body } = event.data as Record<
       string,
       unknown
     >;
@@ -276,31 +276,31 @@ function wireLogBody(event: ActionRunEvent): string {
   return consoleValue(event.data);
 }
 
-function wireLogTitle(event: ActionRunEvent): string {
+function windLogTitle(event: ActionRunEvent): string {
   if (
     event.data !== null &&
     typeof event.data === "object" &&
     !Array.isArray(event.data) &&
-    WIRE_TITLE_KEY in event.data
+    WIND_TITLE_KEY in event.data
   ) {
-    const title = (event.data as Record<string, unknown>)[WIRE_TITLE_KEY];
+    const title = (event.data as Record<string, unknown>)[WIND_TITLE_KEY];
     return typeof title === "string" ? title : String(title);
   }
 
   return "Trace";
 }
 
-function isWireTreeEvent(
+function isWindTreeEvent(
   event: ActionRunEvent
 ): event is ActionRunEvent & { data: Record<string, unknown> } {
   return (
-    event.type === "wire" &&
+    event.type === "wind" &&
     event.data !== null &&
     typeof event.data === "object" &&
     !Array.isArray(event.data) &&
-    (typeof (event.data as Record<string, unknown>)[WIRE_TITLE_KEY] ===
+    (typeof (event.data as Record<string, unknown>)[WIND_TITLE_KEY] ===
       "string" ||
-      typeof (event.data as Record<string, unknown>)[WIRE_SIGNAL_KEY] ===
+      typeof (event.data as Record<string, unknown>)[WIND_SIGNAL_KEY] ===
         "string")
   );
 }
@@ -316,9 +316,9 @@ function tracePayloadLine(data: Record<string, unknown>): string | null {
   const body = Object.fromEntries(
     Object.entries(data).filter(
       ([key, value]) =>
-        key !== WIRE_TITLE_KEY &&
-        key !== WIRE_SIGNAL_KEY &&
-        key !== WIRE_SESSION_KEY &&
+        key !== WIND_TITLE_KEY &&
+        key !== WIND_SIGNAL_KEY &&
+        key !== WIND_SESSION_KEY &&
         value !== undefined
     )
   );
@@ -356,13 +356,13 @@ function tracePayloadLine(data: Record<string, unknown>): string | null {
 }
 
 export function signalPayloadLine(data: Record<string, unknown>): string {
-  const title = String(data[WIRE_SIGNAL_KEY]);
+  const title = String(data[WIND_SIGNAL_KEY]);
   const signalName = tracePath(title).join(".") || title;
   const body = Object.fromEntries(
     Object.entries(data).filter(
       ([key, value]) =>
-        key !== WIRE_SIGNAL_KEY &&
-        key !== WIRE_SESSION_KEY &&
+        key !== WIND_SIGNAL_KEY &&
+        key !== WIND_SESSION_KEY &&
         value !== undefined
     )
   );
@@ -392,20 +392,20 @@ function buildTraceTree(events: ActionRunEvent[]): string {
   let currentRoot: TraceTreeNode | null = null;
 
   for (const event of events) {
-    if (!isWireTreeEvent(event)) continue;
+    if (!isWindTreeEvent(event)) continue;
 
-    if (typeof event.data[WIRE_SIGNAL_KEY] === "string") {
+    if (typeof event.data[WIND_SIGNAL_KEY] === "string") {
       const node =
         currentRoot ??
         ensureTraceNode(
           roots,
-          tracePath(String(event.data[WIRE_SIGNAL_KEY]))[0] ?? "Trace"
+          tracePath(String(event.data[WIND_SIGNAL_KEY]))[0] ?? "Trace"
         );
       node.entries.push({ type: "line", text: signalPayloadLine(event.data) });
       continue;
     }
 
-    const title = String(event.data[WIRE_TITLE_KEY]);
+    const title = String(event.data[WIND_TITLE_KEY]);
     const path = tracePath(title);
     const rootName = path[0] ?? "Trace";
     let node = ensureTraceNode(roots, rootName);
@@ -449,13 +449,13 @@ function renderTraceEntries(
   });
 }
 
-function wireEventsBody(events: ActionRunEvent[]): string {
-  if (events.every(isWireTreeEvent)) return buildTraceTree(events);
+function windEventsBody(events: ActionRunEvent[]): string {
+  if (events.every(isWindTreeEvent)) return buildTraceTree(events);
 
   return events
     .map((event) => {
-      const body = wireLogBody(event);
-      return body ? `${wireLogTitle(event)}\n${body}` : wireLogTitle(event);
+      const body = windLogBody(event);
+      return body ? `${windLogTitle(event)}\n${body}` : windLogTitle(event);
     })
     .join("\n");
 }
@@ -521,10 +521,10 @@ export function buildRunBubbles(
 
   const bubbles: RunBubble[] = [];
   let currentYield = "";
-  const wireEvents: ActionRunEvent[] = [];
+  const windEvents: ActionRunEvent[] = [];
   const toolStates = new Map<string, Record<string, unknown>>();
   const toolBubbles = new Map<string, RunBubble>();
-  let wireBubble: RunBubble | null = null;
+  let windBubble: RunBubble | null = null;
   let hasFinalEvent = false;
   const hasYieldEvents = result.events.some((event) => event.type === "yield");
 
@@ -538,18 +538,18 @@ export function buildRunBubbles(
     currentYield = "";
   };
 
-  const updateWireEvents = () => {
+  const updateWindEvents = () => {
     if (!showLogs) return;
-    if (!wireBubble) {
-      wireBubble = {
-        id: "wire-trace",
-        type: "wire",
+    if (!windBubble) {
+      windBubble = {
+        id: "wind-trace",
+        type: "wind",
         body: "",
         title: "Trace",
       };
-      bubbles.push(wireBubble);
+      bubbles.push(windBubble);
     }
-    wireBubble.body = wireEventsBody(wireEvents);
+    windBubble.body = windEventsBody(windEvents);
   };
 
   result.events.forEach((event, index) => {
@@ -558,10 +558,10 @@ export function buildRunBubbles(
       return;
     }
 
-    if (event.type === "wire") {
+    if (event.type === "wind") {
       flushYield(index);
-      wireEvents.push(event);
-      updateWireEvents();
+      windEvents.push(event);
+      updateWindEvents();
       return;
     }
 
@@ -1453,7 +1453,7 @@ function StateBubble({
             Accept: "text/event-stream, application/json",
             Authorization: `Bearer ${config.apiKey}`,
             "Content-Type": "application/json",
-            wire: "commander",
+            wind: "commander",
           },
           body: JSON.stringify(actionInput),
         });
@@ -1716,7 +1716,7 @@ export function ActionResult({
                               bubble.type === "error" && "text-destructive"
                             )}
                           >
-                            {bubble.type === "wire"
+                            {bubble.type === "wind"
                               ? bubble.title
                               : bubble.type === "tool" ||
                                 bubble.type === "plan" ||
@@ -1737,7 +1737,7 @@ export function ActionResult({
                         </div>
                         <MessageContent
                           className={cn(
-                            bubble.type === "wire" &&
+                            bubble.type === "wind" &&
                               "border-l-[1.5px] border-border px-4 py-3 text-muted-foreground",
                             bubble.type === "activity" &&
                               "border-l-[1.5px] border-border px-4 py-3 text-muted-foreground",
@@ -1770,7 +1770,7 @@ export function ActionResult({
                                 )
                               }
                             />
-                          ) : bubble.type === "wire" ? (
+                          ) : bubble.type === "wind" ? (
                             <pre className="whitespace-pre-wrap font-mono text-[11px] leading-4 text-black">
                               {(bubble.body || "Done")
                                 .split("\n")

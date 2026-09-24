@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
 import { Actor, Step, TW } from "@taskwish/core";
-import { messageLogData } from "@taskwish/wire";
+import { messageLogData } from "@taskwish/wind";
 
 import { Function, Int, Model, Real, RealSort } from "./steps";
 

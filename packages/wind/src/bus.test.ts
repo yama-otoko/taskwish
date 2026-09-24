@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { Wire, configureWire, getWireConfig, ulid } from "./bus";
+import { Wind, configureWind, getWindConfig, ulid } from "./bus";
 import { formatEvent } from "./format";
 import { dispatch } from "./logger";
 import {
@@ -11,10 +11,10 @@ import {
   messageLogData,
 } from "./messages";
 
-describe("Wire", () => {
+describe("Wind", () => {
   test("exposes message constructors", () => {
-    const trace = new Wire.Trace("Worker::run", { result: 1 });
-    expect(trace).toBeInstanceOf(Wire.Message);
+    const trace = new Wind.Trace("Worker::run", { result: 1 });
+    expect(trace).toBeInstanceOf(Wind.Message);
     expect(trace.message).toBe("TW::Trace");
     expect(trace.path).toBe("Worker::run");
     expect(trace.symbol).toBe(">>");
@@ -24,14 +24,14 @@ describe("Wire", () => {
       result: 1,
     });
     expect(messageLogData(trace)).toBe(trace.log);
-    expect(new Wire.Stream("chunk").message).toBe("TW::Stream");
-    const result = new Wire.Result({ answer: 42 });
+    expect(new Wind.Stream("chunk").message).toBe("TW::Stream");
+    const result = new Wind.Result({ answer: 42 });
     expect(result.message).toBe("TW::Result");
     expect(messageData(result)).toEqual({ answer: 42 });
     expect(new TextDecoder().decode(result.toSSE())).toBe(
       'event: TW::Result\ndata: {"answer":42}\n\n'
     );
-    const stateChange = new Wire.StateChange("Counter::state.count", {
+    const stateChange = new Wind.StateChange("Counter::state.count", {
       previous: 19,
       value: 20,
     });
@@ -48,7 +48,7 @@ describe("Wire", () => {
       previous: 19,
       value: 20,
     });
-    const stateResult = new Wire.StateResult("Counter::state.count", {
+    const stateResult = new Wind.StateResult("Counter::state.count", {
       value: 20,
     });
     expect(stateResult.message).toBe("TW::StateResult");
@@ -63,9 +63,9 @@ describe("Wire", () => {
   });
 
   test("signals expose their event separately from their message kind", () => {
-    const signal = new Wire.Signal("Greeter::Message", { name: "Ada" });
+    const signal = new Wind.Signal("Greeter::Message", { name: "Ada" });
 
-    expect(signal).toBeInstanceOf(Wire.Message);
+    expect(signal).toBeInstanceOf(Wind.Message);
     expect(signal.message).toBe("TW::Signal");
     expect(signal.event).toBe("Greeter::Message");
     expect(signal.data).toEqual({
@@ -78,15 +78,15 @@ describe("Wire", () => {
     });
   });
 
-  test("creates a dedicated wire message for every ACP session event", () => {
-    const thought = new Wire.AcpAgentThoughtChunk({
+  test("creates a dedicated wind message for every ACP session event", () => {
+    const thought = new Wind.AcpAgentThoughtChunk({
       sessionId: "session-1",
       update: {
         sessionUpdate: "agent_thought_chunk",
         content: { type: "text", text: "Thinking" },
       },
     });
-    expect(thought).toBeInstanceOf(Wire.Message);
+    expect(thought).toBeInstanceOf(Wind.Message);
     expect(thought.message).toBe("ACP::AgentThoughtChunk");
     expect(thought.data.update.content).toEqual({
       type: "text",
@@ -142,7 +142,7 @@ describe("Wire", () => {
     const logs: unknown[] = [];
     const infos: unknown[] = [];
     const errors: unknown[] = [];
-    const message = new Wire.AcpAgentMessageChunk({
+    const message = new Wind.AcpAgentMessageChunk({
       sessionId: "session-1",
       update: {
         sessionUpdate: "agent_message_chunk",
@@ -163,11 +163,11 @@ describe("Wire", () => {
   });
 
   test("generates a ULID thread id by default", () => {
-    const wire = new Wire();
-    const event = wire.trace("Greeter::hello", { input: { name: "Ada" } });
+    const wind = new Wind();
+    const event = wind.trace("Greeter::hello", { input: { name: "Ada" } });
 
-    expect(wire.threadId).toMatch(/^[0-9A-HJKMNP-TV-Z]{26}$/);
-    expect(event.threadId).toBe(wire.threadId);
+    expect(wind.threadId).toMatch(/^[0-9A-HJKMNP-TV-Z]{26}$/);
+    expect(event.threadId).toBe(wind.threadId);
   });
 
   test("does not log without instance or global log config", () => {
@@ -178,9 +178,9 @@ describe("Wire", () => {
     };
 
     try {
-      configureWire({ log: undefined, threadId: undefined });
-      const wire = new Wire();
-      wire.trace("Greeter::hello", { input: { name: "Ada" } });
+      configureWind({ log: undefined, threadId: undefined });
+      const wind = new Wind();
+      wind.trace("Greeter::hello", { input: { name: "Ada" } });
 
       expect(events).toEqual([]);
     } finally {
@@ -190,12 +190,12 @@ describe("Wire", () => {
 
   test("logs trace events with a stable thread id", () => {
     const events: unknown[] = [];
-    const wire = new Wire({
+    const wind = new Wind({
       threadId: "thread-1",
       log: (event) => events.push(event),
     });
 
-    const event = wire.trace("Greeter::hello", { input: { name: "Ada" } });
+    const event = wind.trace("Greeter::hello", { input: { name: "Ada" } });
 
     expect(events).toEqual([event]);
     expect(event).toEqual({
@@ -209,7 +209,7 @@ describe("Wire", () => {
     const loggedEvents: unknown[] = [];
     const emittedEvents: unknown[] = [];
     const { events } = await import("./bus");
-    const wire = new Wire({
+    const wind = new Wind({
       threadId: "thread-1",
       log: (event) => loggedEvents.push(event),
     });
@@ -218,7 +218,7 @@ describe("Wire", () => {
     events.on("Greeter::Message", listener);
 
     try {
-      const event = wire.signal("Greeter::Message", { name: "Ada" });
+      const event = wind.signal("Greeter::Message", { name: "Ada" });
 
       expect(loggedEvents).toEqual([event]);
       expect(emittedEvents).toEqual([{ name: "Ada" }]);
@@ -235,9 +235,9 @@ describe("Wire", () => {
   test("accepts service references in global config", () => {
     const service = { hello: () => "hello" };
 
-    configureWire({ services: [service] });
+    configureWind({ services: [service] });
 
-    expect(getWireConfig()).toEqual({
+    expect(getWindConfig()).toEqual({
       threadId: undefined,
       log: undefined,
     });
@@ -245,16 +245,16 @@ describe("Wire", () => {
 
   test("supports global logging config", () => {
     const events: unknown[] = [];
-    configureWire({
+    configureWind({
       threadId: "thread-global",
       log: (event) => events.push(event),
     });
 
     try {
-      const wire = new Wire();
-      const event = wire.trace("Greeter::hello", { input: { name: "Ada" } });
+      const wind = new Wind();
+      const event = wind.trace("Greeter::hello", { input: { name: "Ada" } });
 
-      expect(getWireConfig()).toEqual({
+      expect(getWindConfig()).toEqual({
         threadId: "thread-global",
         log: expect.any(Function),
       });
@@ -265,7 +265,7 @@ describe("Wire", () => {
         input: { name: "Ada" },
       });
     } finally {
-      configureWire({ log: undefined, threadId: undefined });
+      configureWind({ log: undefined, threadId: undefined });
     }
   });
 
@@ -277,8 +277,8 @@ describe("Wire", () => {
     };
 
     try {
-      const wire = new Wire({ threadId: "main", log: "console" });
-      const event = wire.trace("Greeter::hello", { input: { name: "Ada" } });
+      const wind = new Wind({ threadId: "main", log: "console" });
+      const event = wind.trace("Greeter::hello", { input: { name: "Ada" } });
       const formattedEvent = stripAnsi(String(events[0]));
 
       expect(events).toHaveLength(1);

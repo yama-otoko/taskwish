@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { Trace } from "@taskwish/wire";
+import { Trace } from "@taskwish/wind";
 
 describe("TW", () => {
   test("Trace serializes to its SSE payload and logs compactly", () => {

@@ -7,7 +7,7 @@
   "dependencies": {
     "@taskwish/skill": "^0.0.1",
     "@taskwish/terminal": "^0.0.1",
-    "@taskwish/wire": "^0.0.1",
+    "@taskwish/wind": "^0.0.1",
     "taskwish": "^0.0.9"
   },
   "description": "Create a fresh TypeScript TaskWish project",
