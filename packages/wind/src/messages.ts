@@ -91,6 +91,30 @@ export class Stream<const Data> extends Message<"TW::Stream", Data> {
   }
 }
 
+/** An action invocation within a task run. */
+export type TaskRunStep = {
+  $: string;
+  "=": string;
+  [key: string]: unknown;
+};
+
+/** The ordered action DSL executed by a task. */
+export type TaskRun = readonly TaskRunStep[];
+
+/** A task described by either an objective or an executable run. */
+export type TaskData =
+  | { objective: string; run?: never }
+  | { objective?: never; run: TaskRun };
+
+export class Task<const Data extends TaskData = TaskData> extends Message<
+  "TW::Task",
+  Data
+> {
+  constructor(data: Data) {
+    super("TW::Task", data);
+  }
+}
+
 /** ACP session-update discriminators supported by the wind protocol. */
 export type AcpSessionUpdateName =
   | "user_message_chunk"
@@ -464,6 +488,7 @@ export function messageLogData(message: unknown): unknown {
 type TaskWishMessage =
   | Signal
   | Trace
+  | Task
   | Result
   | StateChange
   | StateResult
@@ -478,6 +503,7 @@ function isTaskWishMessage(message: unknown): message is TaskWishMessage {
   return (
     messageType === "TW::Signal" ||
     messageType === "TW::Trace" ||
+    messageType === "TW::Task" ||
     messageType === "TW::Result" ||
     messageType === "TW::StateChange" ||
     messageType === "TW::StateResult" ||
