@@ -25,6 +25,21 @@ describe("Wind", () => {
     });
     expect(messageLogData(trace)).toBe(trace.log);
     expect(new Wind.Stream("chunk").message).toBe("TW::Stream");
+    const run = [
+      { $: "generateText", "=": "gent" },
+      { $: "Slack::postMessage", "=": "posm" },
+    ] as const;
+    const objectiveTask = new Wind.Task({
+      objective: "Summarize new emails and post them to Slack",
+    });
+    expect(objectiveTask).toBeInstanceOf(Wind.Message);
+    expect(objectiveTask.message).toBe("TW::Task");
+    expect(messageData(objectiveTask)).toEqual({
+      objective: "Summarize new emails and post them to Slack",
+    });
+    const runTask = new Wind.Task({ run });
+    expect(runTask.message).toBe("TW::Task");
+    expect(messageData(runTask)).toEqual({ run });
     const result = new Wind.Result({ answer: 42 });
     expect(result.message).toBe("TW::Result");
     expect(messageData(result)).toEqual({ answer: 42 });
