@@ -109,6 +109,27 @@ export const { Greeter } = actor().service({ greet });
 
 Action metadata powers generated help, Console controls, and agent-facing descriptions without requiring a separate schema.
 
+## State storage
+
+Actor state uses JSON files in `state/` by default. Bun applications can opt into
+SQLite by adding a store to the actor scope:
+
+```ts
+import { Actor, State, Store } from "taskwish";
+
+export const { actor } = Actor("Todos").scope(
+  Store({ adapter: "sqlite", database: "state/taskwish.sqlite" }),
+  State({ items: State.List({ description: "string" }) }),
+);
+```
+
+When `database` is omitted, SQLite uses
+`<TW_DEFAULT_STORE_PATH>/taskwish.sqlite`, or `state/taskwish.sqlite`. The
+filesystem adapter remains the default and is available explicitly with
+`Store({ adapter: "fs", directory: "state" })`. The SQLite adapter uses Bun's
+built-in SQLite driver; Node.js applications should continue to use the
+filesystem adapter.
+
 ## Repository
 
 This repository is a Bun workspace managed with Turborepo.
