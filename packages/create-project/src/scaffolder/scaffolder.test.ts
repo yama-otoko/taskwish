@@ -159,6 +159,13 @@ describe("Scaffolder.createProject", () => {
       ["TypeSafe", "AgentGuardian"],
       "src/agent-guardian/agent-guardian.test.ts",
     ],
+    [
+      "beeper",
+      "src/beeper/discover-integrations.ts",
+      "discoverIntegrations",
+      ["Builder", "Beeper"],
+      "src/beeper/beeper.test.ts",
+    ],
   ] as const)(
     "creates the %s TypeScript template",
     async (template, actionPath, actorSource, actorNames, testPath) => {
@@ -216,7 +223,8 @@ describe("Scaffolder.createProject", () => {
         template === "equipment-diagnostician" ||
         template === "open-banking" ||
         template === "revenue-monitor" ||
-        template === "agent-guardian"
+        template === "agent-guardian" ||
+        template === "beeper"
           ? "bun test src"
           : "bun test"
       );
