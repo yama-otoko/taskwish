@@ -23,6 +23,7 @@ export const TEMPLATE_NAMES = [
   "open-banking",
   "revenue-monitor",
   "agent-guardian",
+  "beeper",
 ] as const;
 
 export type TemplateName = (typeof TEMPLATE_NAMES)[number];
@@ -102,7 +103,8 @@ export const { createProject } = actor()
         template !== "equipment-diagnostician" &&
         template !== "open-banking" &&
         template !== "revenue-monitor" &&
-        template !== "agent-guardian"
+        template !== "agent-guardian" &&
+        template !== "beeper"
       ) {
         throw new Error(
           `Unknown template "${template}". Choose ${TEMPLATE_NAMES.join(", ")}.`,
@@ -375,6 +377,12 @@ export const { createProject } = actor()
               label: "Agent guardian",
               description:
                 "TypeSafe.ai judgments and confidence-gated review routing for agent runs",
+            },
+            {
+              value: "beeper",
+              label: "Beeper",
+              description:
+                "Discover, connect, search, and message across every Beeper chat network",
             },
           ],
         },

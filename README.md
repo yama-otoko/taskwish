@@ -64,6 +64,7 @@ The generated service prints its local Console URL and API key at startup.
 | [`open-banking`](packages/create-project/templates/open-banking) | PSD2 bank selection → user consent → accounts, balances, and transactions |
 | [`revenue-monitor`](packages/create-project/templates/revenue-monitor) | Open Banking transactions → symbolic growth check → Slack alert |
 | [`agent-guardian`](packages/create-project/templates/agent-guardian) | Agent traces → TypeSafe.ai typed judgments → confidence-gated review routing |
+| [`beeper`](packages/create-project/templates/beeper) | Every connected Beeper network → unified discovery, connection, search, and messaging |
 
 Choose a starter directly with `--template`:
 
@@ -108,6 +109,27 @@ export const { Greeter } = actor().service({ greet });
 ```
 
 Action metadata powers generated help, Console controls, and agent-facing descriptions without requiring a separate schema.
+
+## State storage
+
+Actor state uses JSON files in `state/` by default. Bun applications can opt into
+SQLite by adding a store to the actor scope:
+
+```ts
+import { Actor, State, Store } from "taskwish";
+
+export const { actor } = Actor("Todos").scope(
+  Store({ adapter: "sqlite", database: "state/taskwish.sqlite" }),
+  State({ items: State.List({ description: "string" }) }),
+);
+```
+
+When `database` is omitted, SQLite uses
+`<TW_DEFAULT_STORE_PATH>/taskwish.sqlite`, or `state/taskwish.sqlite`. The
+filesystem adapter remains the default and is available explicitly with
+`Store({ adapter: "fs", directory: "state" })`. The SQLite adapter uses Bun's
+built-in SQLite driver; Node.js applications should continue to use the
+filesystem adapter.
 
 ## Repository
 

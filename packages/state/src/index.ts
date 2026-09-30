@@ -6,7 +6,8 @@ import {
   writeFileSync,
 } from "node:fs";
 import { randomUUID } from "node:crypto";
-import { join, resolve } from "node:path";
+import { createRequire } from "node:module";
+import { dirname, join, resolve } from "node:path";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { scope, type } from "arktype";
 import { TW } from "@taskwish/core";
@@ -149,11 +150,19 @@ export interface StateStore {
   save(actorName: string, state: Record<string, unknown>): void;
 }
 
-export type StoreOptions = {
+export type FileSystemStoreOptions = {
   adapter: "fs";
   /** Defaults to `TW_DEFAULT_STORE_PATH`, then `<cwd>/state`. */
   directory?: string;
 };
+
+export type SQLiteStoreOptions = {
+  adapter: "sqlite";
+  /** Defaults to `<TW_DEFAULT_STORE_PATH>/taskwish.sqlite`, then `<cwd>/state/taskwish.sqlite`. */
+  database?: string;
+};
+
+export type StoreOptions = FileSystemStoreOptions | SQLiteStoreOptions;
 
 type RuntimeListDescriptor = StateListDescriptor & {
   validator: { assert(input: unknown): unknown };
@@ -366,7 +375,7 @@ function writeJsonAtomic(path: string, value: unknown): void {
 }
 
 function fileSystemStateStore(
-  options: Omit<StoreOptions, "adapter"> = {}
+  options: Omit<FileSystemStoreOptions, "adapter"> = {}
 ): StateStore {
   const directory = resolve(
     options.directory ??
@@ -387,6 +396,91 @@ function fileSystemStateStore(
       mkdirSync(directory, { recursive: true });
       const name = safeActorName(actorName);
       writeJsonAtomic(join(directory, `${name}.json`), state);
+    },
+  };
+}
+
+type SQLiteStatement = {
+  get(...values: unknown[]): unknown;
+  run(...values: unknown[]): unknown;
+};
+
+type SQLiteDatabase = {
+  query(sql: string): SQLiteStatement;
+  run(sql: string): unknown;
+};
+
+type SQLiteDatabaseConstructor = new (filename: string) => SQLiteDatabase;
+
+function sqliteDatabaseConstructor(): SQLiteDatabaseConstructor {
+  try {
+    const sqlite = createRequire(import.meta.url)("bun:sqlite") as {
+      Database: SQLiteDatabaseConstructor;
+    };
+    return sqlite.Database;
+  } catch (error) {
+    throw new Error(
+      'The "sqlite" state adapter requires the Bun runtime. Use the "fs" adapter on Node.js.',
+      { cause: error }
+    );
+  }
+}
+
+function sqliteStateStore(
+  options: Omit<SQLiteStoreOptions, "adapter"> = {}
+): StateStore {
+  const configuredDatabase =
+    options.database ??
+    join(
+      process.env.TW_DEFAULT_STORE_PATH ?? join(process.cwd(), "state"),
+      "taskwish.sqlite"
+    );
+  const databasePath =
+    configuredDatabase === ":memory:"
+      ? configuredDatabase
+      : resolve(configuredDatabase);
+
+  if (databasePath !== ":memory:") {
+    mkdirSync(dirname(databasePath), { recursive: true });
+  }
+
+  const Database = sqliteDatabaseConstructor();
+  const database = new Database(databasePath);
+  database.run(`
+    CREATE TABLE IF NOT EXISTS taskwish_state (
+      actor_name TEXT PRIMARY KEY,
+      state TEXT NOT NULL
+    )
+  `);
+  const selectState = database.query(
+    "SELECT state FROM taskwish_state WHERE actor_name = ?"
+  );
+  const upsertState = database.query(`
+    INSERT INTO taskwish_state (actor_name, state)
+    VALUES (?, ?)
+    ON CONFLICT(actor_name) DO UPDATE SET state = excluded.state
+  `);
+
+  return {
+    load(actorName) {
+      const row = selectState.get(actorName) as { state: string } | null;
+      if (!row) return undefined;
+
+      try {
+        return JSON.parse(row.state);
+      } catch (error) {
+        throw new Error(
+          `Unable to read state for ${actorName} from ${databasePath}`,
+          { cause: error }
+        );
+      }
+    },
+    save(actorName, state) {
+      const serialized = JSON.stringify(state);
+      if (serialized === undefined) {
+        throw new TypeError(`State for ${actorName} is not JSON serializable`);
+      }
+      upsertState.run(actorName, serialized);
     },
   };
 }
@@ -679,6 +773,12 @@ export function Store<Ctx extends Record<any, any> = { scope: {} }>(
         [StateStoreDefinition]: true,
         [TW.ActorScope]: true,
         store: fileSystemStateStore(options),
+      } as unknown as StateStoreResult<Ctx>;
+    case "sqlite":
+      return {
+        [StateStoreDefinition]: true,
+        [TW.ActorScope]: true,
+        store: sqliteStateStore(options),
       } as unknown as StateStoreResult<Ctx>;
   }
 }

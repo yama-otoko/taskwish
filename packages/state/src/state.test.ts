@@ -105,6 +105,37 @@ describe("State", () => {
     expect(await decrease()).toBe(0);
   });
 
+  test("SQLite stores actor state and reloads it", async () => {
+    const root = mkdtempSync(join(tmpdir(), "taskwish-state-"));
+    temporaryDirectories.push(root);
+    const database = join(root, "state", "taskwish.sqlite");
+    const sqliteState = () => [
+      Store({ adapter: "sqlite", database }),
+      State({ count: 0 }),
+    ] as const;
+
+    const first = Actor("SQLiteCounter").scope(...sqliteState()).actor();
+    const { increase } = first.on("Command", "increase").run(function () {
+      return ++this.state.count;
+    });
+    expect(await increase()).toBe(1);
+    expect(await increase()).toBe(2);
+
+    const reloaded = Actor("SQLiteCounter").scope(...sqliteState()).actor();
+    const { count } = reloaded.on("Command", "count").run(function () {
+      return this.state.count;
+    });
+    expect(await count()).toBe(2);
+
+    const other = Actor("OtherSQLiteCounter").scope(...sqliteState()).actor();
+    const { count: otherCount } = other
+      .on("Command", "count")
+      .run(function () {
+        return this.state.count;
+      });
+    expect(await otherCount()).toBe(0);
+  });
+
   test("ctx overrides state for isolated tests", async () => {
     const directory = temporaryStateDirectory();
     const { actor } = Actor("MockedCounter").scope(
