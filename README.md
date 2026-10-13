@@ -120,6 +120,7 @@ import { Actor, State, Store } from "taskwish";
 
 export const { actor } = Actor("Todos").scope(
   Store({ adapter: "sqlite", database: "state/taskwish.sqlite" }),
+  
   State({ items: State.List({ description: "string" }) }),
 );
 ```
