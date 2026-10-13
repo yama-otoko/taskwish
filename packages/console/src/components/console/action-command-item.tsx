@@ -14,12 +14,12 @@ function ActionIcon({ action }: { action: ConsoleAction }) {
   return (
     <span
       aria-hidden="true"
-      className="flex shrink-0 items-center justify-center rounded-full text-black"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors group-hover:bg-accent"
     >
       {action.source === "http" ? (
-        <Copy size={24} />
+        <Copy size={18} />
       ) : (
-        <ArrowUpRight size={24} />
+        <ArrowUpRight size={18} />
       )}
     </span>
   );
@@ -48,7 +48,7 @@ export function ActionCommandItem({
       )}
     >
       <div className="flex flex-col gap-2">
-        <span className="break-words font-semibold leading-tight text-black sm:text-lg">
+        <span className="break-words font-semibold leading-tight text-foreground sm:text-lg">
           {actionTitle(action)}
         </span>
       </div>

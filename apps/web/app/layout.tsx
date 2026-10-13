@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import type { ReactNode } from "react";
 import { Footer } from "../src/footer";
 import { Header } from "../src/header";
@@ -6,6 +7,27 @@ import "./globals.css";
 
 const title = "TaskWish — The framework for building autonomous companies";
 const description = "Build autonomous companies from typed actors, tools, state, and AI workflows in TypeScript.";
+const themeScript = `
+  (() => {
+    const key = "taskwish-theme";
+    const root = document.documentElement;
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const applyTheme = () => {
+      let saved;
+      try { saved = localStorage.getItem(key); } catch {}
+      root.dataset.theme = saved === "light" || saved === "dark"
+        ? saved
+        : media.matches ? "dark" : "light";
+    };
+
+    applyTheme();
+    media.addEventListener("change", applyTheme);
+    window.addEventListener("storage", (event) => {
+      if (event.key === key) applyTheme();
+    });
+  })();
+`;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://taskwish.ai"),
@@ -45,13 +67,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
-      <body><Header />{children}<Footer /></body>
+      <body>
+        <Script id="theme-init" strategy="beforeInteractive">{themeScript}</Script>
+        <Header />{children}<Footer />
+      </body>
     </html>
   );
 }
