@@ -31,6 +31,7 @@ export {
   StateChange,
   StateResult,
   Stream,
+  Task,
   Trace,
   acpMessage,
   acpSessionUpdateMessage,
@@ -51,4 +52,7 @@ export type {
   AcpSessionUpdate,
   AcpSessionUpdateName,
   AcpStopData,
+  TaskData,
+  TaskRun,
+  TaskRunStep,
 } from "./messages";

@@ -208,6 +208,7 @@ export namespace Wind {
   export import Signal = WindMessage.Signal;
   export import Trace = WindMessage.Trace;
   export import Stream = WindMessage.Stream;
+  export import Task = WindMessage.Task;
   export import Result = WindMessage.Result;
   export import StateChange = WindMessage.StateChange;
   export import StateResult = WindMessage.StateResult;
