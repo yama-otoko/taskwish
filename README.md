@@ -132,6 +132,25 @@ filesystem adapter remains the default and is available explicitly with
 built-in SQLite driver; Node.js applications should continue to use the
 filesystem adapter.
 
+An existing synchronous SQLite Drizzle connection can be reused instead:
+
+```ts
+import { drizzle } from "drizzle-orm/bun-sqlite";
+import { Actor, State, Store } from "taskwish";
+
+const database = drizzle("state/taskwish.sqlite");
+
+export const { actor } = Actor("Todos").scope(
+  Store({ adapter: "drizzle", database }),
+  State({ items: State.List({ description: "string" }) }),
+);
+```
+
+The adapter creates its `taskwish_state` table when needed. Its Drizzle schema
+is also exported as `taskwishState` for applications that manage migrations
+explicitly. As state is loaded while actor scopes are created and persisted on
+mutation, the adapter requires a synchronous SQLite Drizzle driver.
+
 ## Repository
 
 This repository is a Bun workspace managed with Turborepo.

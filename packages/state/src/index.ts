@@ -10,6 +10,9 @@ import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { scope, type } from "arktype";
+import { eq, sql } from "drizzle-orm";
+import type { BaseSQLiteDatabase } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { TW } from "@taskwish/core";
 import { Wind } from "@taskwish/wind";
 
@@ -162,7 +165,28 @@ export type SQLiteStoreOptions = {
   database?: string;
 };
 
-export type StoreOptions = FileSystemStoreOptions | SQLiteStoreOptions;
+export type DrizzleSQLiteDatabase = BaseSQLiteDatabase<
+  "sync",
+  unknown,
+  Record<string, unknown>
+>;
+
+export type DrizzleStoreOptions = {
+  adapter: "drizzle";
+  /** A synchronous SQLite Drizzle database, such as `drizzle-orm/bun-sqlite`. */
+  database: DrizzleSQLiteDatabase;
+};
+
+export type StoreOptions =
+  | FileSystemStoreOptions
+  | SQLiteStoreOptions
+  | DrizzleStoreOptions;
+
+/** The SQLite table used by the Drizzle state adapter. */
+export const taskwishState = sqliteTable("taskwish_state", {
+  actorName: text("actor_name").primaryKey(),
+  state: text("state").notNull(),
+});
 
 type RuntimeListDescriptor = StateListDescriptor & {
   validator: { assert(input: unknown): unknown };
@@ -485,6 +509,53 @@ function sqliteStateStore(
   };
 }
 
+function drizzleStateStore(
+  options: Omit<DrizzleStoreOptions, "adapter">
+): StateStore {
+  const database = options.database;
+  database.run(sql`
+    CREATE TABLE IF NOT EXISTS taskwish_state (
+      actor_name TEXT PRIMARY KEY,
+      state TEXT NOT NULL
+    )
+  `);
+
+  return {
+    load(actorName) {
+      const row = database
+        .select({ state: taskwishState.state })
+        .from(taskwishState)
+        .where(eq(taskwishState.actorName, actorName))
+        .get();
+      if (!row) return undefined;
+
+      try {
+        return JSON.parse(row.state);
+      } catch (error) {
+        throw new Error(
+          `Unable to read state for ${actorName} from the Drizzle database`,
+          { cause: error }
+        );
+      }
+    },
+    save(actorName, state) {
+      const serialized = JSON.stringify(state);
+      if (serialized === undefined) {
+        throw new TypeError(`State for ${actorName} is not JSON serializable`);
+      }
+
+      database
+        .insert(taskwishState)
+        .values({ actorName, state: serialized })
+        .onConflictDoUpdate({
+          target: taskwishState.actorName,
+          set: { state: serialized },
+        })
+        .run();
+    },
+  };
+}
+
 function observable<T extends object>(
   value: T,
   onChange: () => void,
@@ -779,6 +850,12 @@ export function Store<Ctx extends Record<any, any> = { scope: {} }>(
         [StateStoreDefinition]: true,
         [TW.ActorScope]: true,
         store: sqliteStateStore(options),
+      } as unknown as StateStoreResult<Ctx>;
+    case "drizzle":
+      return {
+        [StateStoreDefinition]: true,
+        [TW.ActorScope]: true,
+        store: drizzleStateStore(options),
       } as unknown as StateStoreResult<Ctx>;
   }
 }
