@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { Actor, Step, TW } from "@taskwish/core";
+import { drizzle } from "drizzle-orm/bun-sqlite";
 import { Store, State, statePayload } from "./index";
 
 const temporaryDirectories: string[] = [];
@@ -130,6 +131,45 @@ describe("State", () => {
     const other = Actor("OtherSQLiteCounter").scope(...sqliteState()).actor();
     const { count: otherCount } = other
       .on("Command", "count")
+      .run(function () {
+        return this.state.count;
+      });
+    expect(await otherCount()).toBe(0);
+  });
+
+  test("Drizzle stores actor state and reloads it", async () => {
+    const database = drizzle(":memory:");
+    const drizzleState = () => [
+      Store({ adapter: "drizzle", database }),
+      
+      State({ count: 0 }),
+    ] as const;
+
+    const first = Actor("DrizzleCounter").scope(...drizzleState()).actor();
+    const { increase } = first.on("Command", "increase").run(function () {
+      return ++this.state.count;
+    });
+    expect(await increase()).toBe(1);
+    expect(await increase()).toBe(2);
+
+    const reloaded = Actor("DrizzleCounter")
+      .scope(...drizzleState())
+
+      .actor();
+      
+    const { count } = reloaded.on("Command", "count").run(function () {
+      return this.state.count;
+    });
+    expect(await count()).toBe(2);
+
+    const other = Actor("OtherDrizzleCounter")
+      .scope(...drizzleState())
+
+      .actor();
+
+    const { count: otherCount } = other
+      .on("Command", "count")
+
       .run(function () {
         return this.state.count;
       });
