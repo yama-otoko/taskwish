@@ -27,7 +27,7 @@ const pages: DocPage[] = [
       <h2>Command actions</h2><p>Use <code>.on("Command", name)</code> for public actions. Inputs are runtime-validated and inferred inside every step. Metadata powers labels, descriptions, examples, and controls in Console.</p>
       <CodeBlock title="src/greeter/greet.ts" code={`import { Step } from "taskwish";\nimport { actor } from "./greeter";\n\nexport const { greet } = actor()\n  .on("Command", "greet")\n\n  .input({ name: "string" })\n\n  .run(\n    Step("createGreeting", function () {\n      return \`Hello, \${this.input.name.trim()}!\`;\n    }),\n  )\n\n  .meta({\n    description: "Greet a person by name",\n    input: { name: { example: "Ada" } },\n  });`} />
       <h2>Scheduled actions</h2><p>Use a <code>Schedule</code> action for recurring work. It exports as <code>onSchedule</code> by default; add <code>command</code> when the job needs a domain-specific name. The server validates the expression, starts the job, prevents overlapping runs by default, and stops it during shutdown.</p>
-      <CodeBlock code={`export const { revenueMonitor } = actor()\n  .on("Schedule", "0 9 1 * *")\n  .command("revenueMonitor")\n\n  .run(\n    Step("refreshRevenue", function () {\n      return refreshFor(this.input.at);\n    }),\n  );`} />
+      <CodeBlock code={`export const { revenueMonitor } = actor()\n  .on("Schedule", "0 9 1 * *")\n\n  .command("revenueMonitor")\n\n  .run(\n    Step("refreshRevenue", function () {\n      return refreshFor(this.input.at);\n    }),\n  );`} />
       <h2>Service export</h2><CodeBlock title="src/greeter/index.ts" code={`import { actor } from "./greeter";\nimport { greet } from "./greet";\n\nexport const { Greeter } = actor().service({ greet });`} />
     </>,
   },
