@@ -11,7 +11,7 @@
     "main": "./dist/index.cjs",
     "types": "./dist/index.d.ts"
   },
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Typed TaskWish expression helpers",
   "license": "Elastic-2.0",
   "exports": {
