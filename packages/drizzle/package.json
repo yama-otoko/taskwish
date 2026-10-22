@@ -1,0 +1,56 @@
+{
+  "name": "@taskwish/drizzle",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      },
+      "./bun-sqlite": {
+        "import": "./dist/bun-sqlite.mjs",
+        "require": "./dist/bun-sqlite.cjs"
+      }
+    },
+    "main": "./dist/index.cjs",
+    "types": "./dist/index.d.ts"
+  },
+  "version": "0.0.1",
+  "description": "Symbolic callback expressions for Drizzle ORM",
+  "license": "Elastic-2.0",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./bun-sqlite": {
+      "source": "./src/bun-sqlite.ts",
+      "import": "./dist/bun-sqlite.mjs",
+      "require": "./dist/bun-sqlite.cjs",
+      "types": "./dist/bun-sqlite.d.ts"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "bun ../../scripts/build-package.ts",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "jsep": "^1.4.0"
+  },
+  "peerDependencies": {
+    "drizzle-orm": "^0.45.4"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.12",
+    "drizzle-orm": "^0.45.4",
+    "typescript": "^5.9.2"
+  }
+}
