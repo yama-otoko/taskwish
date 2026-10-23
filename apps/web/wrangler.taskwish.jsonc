@@ -9,7 +9,11 @@
   "preview_urls": false,
   "routes": [
     {
-      "pattern": "taskwish.ai",
+      "pattern": "taskwish.ai/*",
+      "zone_name": "taskwish.ai"
+    },
+    {
+      "pattern": "www.taskwish.ai",
       "custom_domain": true
     }
   ],
