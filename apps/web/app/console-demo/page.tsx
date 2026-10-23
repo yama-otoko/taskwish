@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Console } from "@taskwish/console/react";
 import "@taskwish/console/styles.css";
-import { consoleDemoConfig } from "../../src/console-demo-config";
+import { ConsoleDemoApp } from "../../src/console-demo-app";
 
 export const metadata: Metadata = {
   title: "TaskWish Console preview",
@@ -74,11 +73,7 @@ export default function ConsoleDemoPage() {
           opacity: 1 !important;
         }
       `}</style>
-      <Console
-        config={consoleDemoConfig}
-        autoFocus={false}
-        showMcpServer
-      />
+      <ConsoleDemoApp />
     </div>
   );
 }
