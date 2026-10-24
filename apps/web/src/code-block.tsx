@@ -1,7 +1,12 @@
 import { createHighlighter, type ThemedToken } from "shiki";
+import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 import { CopyButton } from "./copy-button";
 
-const highlighter = createHighlighter({ langs: ["typescript", "shell"], themes: ["github-dark"] });
+const highlighter = createHighlighter({
+  langs: ["typescript", "shell"],
+  themes: ["github-dark"],
+  engine: createJavaScriptRegexEngine(),
+});
 
 export async function CodeBlock({ code, title = "taskwish.ts", language = "ts" }: { code: string; title?: string; language?: string }) {
   const lang = language === "sh" ? "shell" : "typescript";

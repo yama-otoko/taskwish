@@ -114,3 +114,27 @@
   fill: #000 !important;
   stroke: none;
 }
+
+.actor-artwork-dark {
+  display: none;
+}
+
+html[data-theme="dark"] .actor-artwork-light,
+html.dark .actor-artwork-light {
+  display: none;
+}
+
+html[data-theme="dark"] .actor-artwork-dark,
+html.dark .actor-artwork-dark {
+  display: block;
+}
+
+.actor-artwork-dark .mo-bob > g:first-child {
+  fill: #cc8bde !important;
+  stroke: none;
+  filter: none;
+}
+
+.actor-artwork-dark .mo-eyes path {
+  fill: #130d15 !important;
+}

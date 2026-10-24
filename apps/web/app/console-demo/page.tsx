@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Console } from "@taskwish/console/react";
 import "@taskwish/console/styles.css";
-import { consoleDemoConfig } from "../../src/console-demo-config";
+import { ConsoleDemoApp } from "../../src/console-demo-app";
 
 export const metadata: Metadata = {
   title: "TaskWish Console preview",
@@ -60,25 +59,8 @@ export default function ConsoleDemoPage() {
         html[data-theme="dark"] body:has(.console-demo-page) select,
         html[data-theme="dark"] body:has(.console-demo-page) select option { background: #14171b !important; color: #f0f2f4 !important; }
         html[data-theme="dark"] body:has(.console-demo-page) input[type="checkbox"] { accent-color: #00e6a8; background: #14171b; }
-        html[data-theme="dark"] body:has(.console-demo-page) .mo-bob > g:first-child {
-          fill: transparent !important;
-          stroke: hsl(var(--neutral-background)) !important;
-          stroke-width: 2px;
-          stroke-opacity: 1 !important;
-          opacity: 1 !important;
-          filter: drop-shadow(0 0 1px #fff);
-        }
-        html[data-theme="dark"] body:has(.console-demo-page) .mo-eyes path {
-          fill: hsl(var(--neutral-background)) !important;
-          fill-opacity: 1 !important;
-          opacity: 1 !important;
-        }
       `}</style>
-      <Console
-        config={consoleDemoConfig}
-        autoFocus={false}
-        showMcpServer
-      />
+      <ConsoleDemoApp />
     </div>
   );
 }
