@@ -36,7 +36,7 @@ export default function ActorArtwork({
             "--mo-look-my": 1.3,
             "--mo-saccade": "7575ms",
             "--mo-saccade-phase": "-2871ms",
-            "--mo-head": "#22d3ee",
+            "--mo-head": "#00dfa3",
             "--mo-eye": "#083344",
           } as CSSProperties
         }
@@ -44,7 +44,7 @@ export default function ActorArtwork({
         <g className="mo-root mo-always">
           <g className="mo-breathe">
             <g className="mo-bob">
-              <g fill="#22d3ee">
+              <g fill="#00dfa3">
                 <path d="M89.06 51.24C89.06 72.47 71.44 91.16 51.42 91.16C31.41 91.16 13.79 72.47 13.79 51.24C13.79 30.01 31.41 11.32 51.42 11.32C71.44 11.32 89.06 30.01 89.06 51.24Z" />
               </g>
               <g fill="#083344" className="mo-eyes">
