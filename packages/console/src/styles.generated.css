@@ -3209,12 +3209,12 @@ html.dark .actor-artwork-dark {
   display: block;
 }
 .actor-artwork-dark .mo-bob > g:first-child {
-  fill: #cc8bde !important;
+  fill: #22d3ee !important;
   stroke: none;
   filter: none;
 }
 .actor-artwork-dark .mo-eyes path {
-  fill: #130d15 !important;
+  fill: #083344 !important;
 }
 @property --tw-translate-x {
   syntax: "*";
