@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">Uncle Sam inspired TaskWish character</title>
+<desc id="desc">A confident white-haired character in a tall charcoal top hat with an electric blue band, tailored coat, bow tie and pointed goatee, holding an electric blue tipped magic wand. No logos. Transparent background.</desc>
+<defs>
+<linearGradient id="coat" x1="157" y1="280" x2="346" y2="450" gradientUnits="userSpaceOnUse"><stop stop-color="#303030"/><stop offset="1" stop-color="#101010"/></linearGradient>
+<linearGradient id="hat" x1="185" y1="68" x2="300" y2="201" gradientUnits="userSpaceOnUse"><stop stop-color="#353535"/><stop offset="1" stop-color="#111"/></linearGradient>
+</defs>
+<ellipse cx="255" cy="468" rx="114" ry="10" fill="#111" opacity=".08"/>
+<!-- Tailored coat and shirt -->
+<path d="M204 287C167 292 145 318 137 354L124 442C159 456 185 456 204 448L214 455H302L313 448L350 452L369 424L352 338C346 310 321 293 291 287Z" fill="url(#coat)" stroke="#111" stroke-width="5" stroke-linejoin="round"/>
+<path d="M214 289L255 279L295 290L277 400L254 437L232 400Z" fill="#f4f4f4"/>
+<path d="M208 291L183 318L211 332L195 350L251 437L227 320Z" fill="#383838" stroke="#111" stroke-width="4" stroke-linejoin="round"/>
+<path d="M299 291L322 318L294 332L310 350L258 437L279 319Z" fill="#282828" stroke="#111" stroke-width="4" stroke-linejoin="round"/>
+<path d="M255 317L231 305V333L255 324L278 333V305Z" fill="#3c12f5" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+<rect x="249" y="312" width="13" height="17" rx="4" fill="#3c12f5"/>
+<circle cx="255" cy="353" r="3" fill="#777"/>
+<circle cx="255" cy="378" r="3" fill="#777"/>
+<!-- Ears and white side hair -->
+<path d="M189 218C171 205 165 223 173 238L190 248M319 217C337 205 343 223 335 238L318 248" fill="#e5e5e5" stroke="#111" stroke-width="5"/>
+<path d="M185 197C171 213 175 256 193 270L205 241L196 203M317 197C333 215 333 251 315 269L303 239L308 202" fill="#f4f4f4" stroke="#111" stroke-width="5"/>
+<!-- Face -->
+<path d="M194 190C212 176 293 174 314 190L315 246C312 277 286 298 255 301C223 297 199 279 194 250Z" fill="#eee" stroke="#111" stroke-width="5"/>
+<path d="M206 218L230 214M277 214L302 218" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+<path d="M215 227L228 225M280 225L294 227" stroke="#111" stroke-width="4" stroke-linecap="round"/>
+<path d="M222 226V233M286 226V233" stroke="#111" stroke-width="6" stroke-linecap="round"/>
+<path d="M249 230L243 250Q253 258 264 249" stroke="#b7b7b7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M238 274Q254 282 272 271" stroke="#111" stroke-width="4" stroke-linecap="round"/>
+<!-- Narrow mustache and signature pointed goatee -->
+<path d="M254 260C241 251 228 258 221 267C233 270 245 269 254 264C263 269 276 270 287 267C278 257 266 251 254 260Z" fill="#fff"/>
+<path d="M237 285Q254 294 273 284L268 308L254 325L241 307Z" fill="#fff" stroke="#c9c9c9" stroke-width="3" stroke-linejoin="round"/>
+<path d="M253 297V311" stroke="#ddd" stroke-width="3" stroke-linecap="round"/>
+<!-- Tall top hat: no stars, emblems or logos -->
+<path d="M188 76Q253 54 318 76L303 193Q254 207 204 193Z" fill="url(#hat)" stroke="#111" stroke-width="5" stroke-linejoin="round"/>
+<path d="M201 165Q254 180 307 165L303 194Q254 207 204 194Z" fill="#3c12f5"/>
+<path d="M188 76Q253 96 318 76" stroke="#4b4b4b" stroke-width="3"/>
+<path d="M211 97L218 154" stroke="#505050" stroke-width="4" stroke-linecap="round"/>
+<path d="M167 190Q253 209 340 190C350 197 348 206 336 211Q254 233 172 211C159 206 157 198 167 190Z" fill="#111"/>
+<g transform="translate(512 0) scale(-1 1)">
+<!-- Raised casting arm, elbow out and wrist lifted -->
+<path d="M170 329C155 318 140 330 130 348L110 379C105 387 98 388 92 379L74 346L57 355L76 396C86 417 106 421 121 405L152 371C164 357 176 342 170 329Z" fill="#292929" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M65 360L52 339L82 317L97 339Z" fill="#f4f4f4" stroke="#111" stroke-width="4" stroke-linejoin="round"/>
+<!-- Upright wand passes through the relaxed closed grip -->
+<path d="M80 365L58 214" stroke="#111" stroke-width="11" stroke-linecap="round"/>
+<path d="M62 240L58 214" stroke="#3c12f5" stroke-width="11" stroke-linecap="round"/>
+<!-- Hand seen from the side: curled fingers, bent wrist, resting thumb -->
+<path d="M58 338L50 324C45 315 45 301 51 294C55 289 61 290 64 295C69 287 77 290 80 296C87 292 94 298 94 305L95 321C96 329 89 336 80 341L71 348Z" fill="#eee" stroke="#111" stroke-width="4.5" stroke-linejoin="round"/>
+<path d="M63 298L65 315M78 299L80 314M91 306L92 316" stroke="#aaa" stroke-width="3" stroke-linecap="round"/>
+<path d="M52 322C48 315 50 309 56 308C62 308 65 315 69 316L82 315C91 315 93 326 84 330L72 334" fill="#f4f4f4" stroke="#111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M115 393Q132 369 146 345" stroke="#474747" stroke-width="3" stroke-linecap="round"/>
+<!-- Magic gathering above the wand -->
+<path d="M54 168L59 184L75 189L59 194L54 210L49 194L33 189L49 184Z" fill="#3c12f5"/>
+<path d="M98 207V221M91 214H105" stroke="#3c12f5" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="32" cy="235" r="3.5" fill="#aaa"/>
+<path d="M89 163L92 157" stroke="#aaa" stroke-width="3" stroke-linecap="round"/>
+</g>
+</svg>

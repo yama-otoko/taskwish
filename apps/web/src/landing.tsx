@@ -1,4 +1,5 @@
 import { ArrowRight, GitBranch, Network, Repeat2, Terminal } from "lucide-react";
+import Image from "next/image";
 import { ConsoleDemo } from "./console-demo";
 import { CopyButton } from "./copy-button";
 
@@ -34,6 +35,16 @@ export function Landing() {
             <WorkflowCard icon={<GitBranch />} title="Event-driven company" command="software-factory">
               <Node label="GitHub" /><Connector /><Node label="Coding agent" tone="green" /><Connector /><Node label="Review agent" tone="blue" />
             </WorkflowCard>
+          </div>
+        </div>
+      </section>
+
+      <section className="wizard-section" aria-labelledby="wizard-title">
+        <div className="minimal-shell wizard-inner">
+          <Image className="wizard-illustration" src="/wizard.svg" alt="TaskWish Wizard holding a blue-tipped magic wand" width={512} height={512} />
+          <div className="wizard-copy">
+            <span className="wizard-status">Coming soon</span>
+            <h2 id="wizard-title">Access Wizard soon on <a href="https://cloud.taskwish.ai">cloud.taskwish.ai</a></h2>
           </div>
         </div>
       </section>

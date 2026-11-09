@@ -662,6 +662,20 @@ html[data-theme="dark"] body:has(.minimal-landing) .footer-inner a:hover { color
   }
 }
 
+.wizard-section { padding-block: 72px; background: var(--tw-surface); }
+.wizard-inner { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); align-items: center; gap: 64px; }
+.wizard-illustration { display: block; width: min(100%, 360px); height: auto; justify-self: center; }
+.wizard-status { display: inline-flex; padding: 8px 12px; border: 1px solid currentColor; border-radius: 999px; color: var(--tw-green); font: 500 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.wizard-copy h2 { max-width: 620px; margin: 24px 0 0; font-size: clamp(38px, 4.5vw, 64px); line-height: 1.08; letter-spacing: -.05em; }
+.wizard-copy h2 a { color: var(--tw-green); overflow-wrap: anywhere; }
+.wizard-copy h2 a:hover { text-decoration: underline; text-underline-offset: .12em; }
+@media (max-width: 760px) {
+  .wizard-section { padding-block: 56px 72px; }
+  .wizard-inner { grid-template-columns: 1fr; gap: 24px; text-align: center; }
+  .wizard-illustration { width: min(100%, 260px); }
+  .wizard-copy h2 { margin-inline: auto; }
+}
+
 /* Documentation uses the same light paper surface and centered frame. */
 body:has(.docs-shell) {
   background: #f4f4f4;
